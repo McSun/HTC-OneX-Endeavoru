@@ -177,9 +177,6 @@ static bool short_autosuspend;
 
 #ifdef BB_XMM_OEM1
 
-#define pr_debug pr_info
-
-
 #endif /* BB_XMM_OEM1 */
 
 static struct usb_device_id xmm_pm_ids[] = {
