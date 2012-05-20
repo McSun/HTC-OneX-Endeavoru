@@ -415,11 +415,9 @@ int sysdev_suspend(pm_message_t state)
 	struct sys_device *sysdev, *err_dev;
 	struct sysdev_driver *drv, *err_drv;
 	int ret;
-	const char *sysdev_name;
 
 	pr_debug("Checking wake-up interrupts\n");
-	pmr_pr_info("[R]+sysdev:\n");
-					
+
 	/* Return error code if there are any wake-up interrupts pending */
 	ret = check_wakeup_irqs();
 	if (ret)
@@ -435,19 +433,14 @@ int sysdev_suspend(pm_message_t state)
 			 kobject_name(&cls->kset.kobj));
 
 		list_for_each_entry(sysdev, &cls->kset.list, kobj.entry) {
-			sysdev_name = kobject_name(&sysdev->kobj);
 			pr_debug(" %s\n", kobject_name(&sysdev->kobj));
 
 			/* Call auxiliary drivers first */
 			list_for_each_entry(drv, &cls->drivers, entry) {
 				if (drv->suspend) {
-					pmr_pr_info("[R]+%s:a\n", sysdev_name);
 					ret = drv->suspend(sysdev, state);
-					pmr_pr_info("[R]-\n");
-					if (ret) {
-						pmr_pr_info("[R] sysdev_suspend: abort (auxillary)\n");
+					if (ret)
 						goto aux_driver;
-					}
 				}
 				WARN_ONCE(!irqs_disabled(),
 					"Interrupts enabled after %pF\n",
@@ -456,20 +449,15 @@ int sysdev_suspend(pm_message_t state)
 
 			/* Now call the generic one */
 			if (cls->suspend) {
-				pmr_pr_info("[R]+%s:g\n", sysdev_name);
 				ret = cls->suspend(sysdev, state);
-				pmr_pr_info("[R]-\n");
-				if (ret) {
-					pmr_pr_info("[R] sysdev_suspend: abort (generic)\n");
+				if (ret)
 					goto cls_driver;
-				}
 				WARN_ONCE(!irqs_disabled(),
 					"Interrupts enabled after %pF\n",
 					cls->suspend);
 			}
 		}
 	}
-	pmr_pr_info("[R]-sysdev:\n");
 	return 0;
 	/* resume current sysdev */
 cls_driver:
@@ -503,8 +491,6 @@ aux_driver:
 			__sysdev_resume(err_dev);
 		}
 	}
-
-	pmr_pr_info("[R] sysdev_suspend: end recovered\n");
 	return ret;
 }
 EXPORT_SYMBOL_GPL(sysdev_suspend);
