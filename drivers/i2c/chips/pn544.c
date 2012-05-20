@@ -283,37 +283,25 @@ static ssize_t pn544_dev_write(struct file *filp, const char __user *buf,
 		size_t count, loff_t *offset)
 {
 	struct pn544_dev  *pn544_dev;
-	char buffer[MAX_BUFFER_SIZE];
+	char tmp[MAX_BUFFER_SIZE];
 	int ret;
-	int i;
-	i = 0;
-
-	D("%s: start count = %u\n", __func__, count);
 
 	pn544_dev = filp->private_data;
 
-	if (count > MAX_BUFFER_SIZE) {
-		E("%s : count =%d> MAX_BUFFER_SIZE\n", __func__, count);
+	if (count > MAX_BUFFER_SIZE)
 		count = MAX_BUFFER_SIZE;
-	}
 
-	D("%s : writing %zu bytes\n", __func__, count);
-
-	if (copy_from_user(buffer, buf, count)) {
-		E("%s : failed to copy from user space\n", __func__);
+	if (copy_from_user(tmp, buf, count)) {
+		pr_err("%s : failed to copy from user space\n", __func__);
 		return -EFAULT;
 	}
 
-	DBUF(buffer, count);
-
+	pr_debug("%s : writing %zu bytes.\n", __func__, count);
 	/* Write data */
-	ret = pn544_TxData(buffer, count);
-	if (ret < 0) {
-		E("%s : i2c_master_send returned %d\n", __func__, ret);
+	ret = i2c_master_send(pn544_dev->client, tmp, count);
+	if (ret != count) {
+		pr_err("%s : i2c_master_send returned %d\n", __func__, ret);
 		ret = -EIO;
-	} else {
-		D("%s done count = %u\n", __func__, count);
-		return count;
 	}
 
 	return ret;
