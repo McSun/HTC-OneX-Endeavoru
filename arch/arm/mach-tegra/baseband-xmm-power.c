@@ -205,7 +205,7 @@ static struct gpio tegra_baseband_gpios_power_off_modem[] = {
 #ifdef BB_XMM_OEM1
 	{ BB_VDD_EN, GPIOF_OUT_INIT_LOW, "BB_VDD_EN" },
 	{ AP2BB_RST_PWRDWNn, GPIOF_OUT_INIT_LOW, "AP2BB_RST_PWRDWNn" },
-#endif BB_XMM_OEM1
+#endif /* BB_XMM_OEM1 */
 };
 
 
