@@ -175,10 +175,6 @@ MODULE_PARM_DESC(autosuspend_delay,
 
 static bool short_autosuspend;
 
-#ifdef BB_XMM_OEM1
-
-#endif /* BB_XMM_OEM1 */
-
 static struct usb_device_id xmm_pm_ids[] = {
 	{ USB_DEVICE(VENDOR_ID, PRODUCT_ID),
 	.driver_info = 0 },
@@ -195,7 +191,7 @@ static struct gpio tegra_baseband_gpios[] = {
 #ifdef BB_XMM_OEM1
 	{ BB_VDD_EN, GPIOF_OUT_INIT_LOW, "BB_VDD_EN" },
 	{ AP2BB_RST_PWRDWNn, GPIOF_OUT_INIT_LOW, "AP2BB_RST_PWRDWNn" },
-#endif BB_XMM_OEM1
+#endif /* BB_XMM_OEM1 */
 };
 /*HTC*/
 //for power consumation , power off modem
