@@ -200,7 +200,7 @@ EXPORT_SYMBOL(pm_debug_dvfs);
 #include <linux/time.h>
 #include <linux/rtc.h>
 #include <mach/board_htc.h>
-extern void htc_print_active_wake_locks(void);
+
 /*
  * The idle thread, has rather strange semantics for calling pm_idle,
  * but this is what x86 does and we need to do the same, so that
@@ -230,7 +230,6 @@ void cpu_idle(void) {
 				rtc_time_to_tm(ts.tv_sec - (sys_tz.tz_minuteswest * 60), &tm);
 				printk(KERN_INFO "[PM] hTC PM Statistic  %02d-%02d %02d:%02d:%02d \n",
 					tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-				htc_print_active_wake_locks();
 			}
 			bPrint_wake_lock = !bPrint_wake_lock;
 		}
