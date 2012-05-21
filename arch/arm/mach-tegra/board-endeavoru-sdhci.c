@@ -65,12 +65,6 @@ static struct wl12xx_platform_data enterprise_wlan_data __initdata = {
 };
 /* HTC_WIFI_END */
 
-static struct wifi_platform_data enterprise_wifi_control = {
-	.set_power      = enterprise_wifi_power,
-	.set_reset      = enterprise_wifi_reset,
-	.set_carddetect = enterprise_wifi_set_carddetect,
-};
-
 static struct resource wifi_resource[] = {
 	[0] = {
 		.name	= "bcm4329_wlan_irq",
