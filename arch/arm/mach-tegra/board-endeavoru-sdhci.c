@@ -117,21 +117,6 @@ static struct resource sdhci_resource3[] = {
 	},
 };
 
-static struct embedded_sdio_data embedded_sdio_data0 = {
-	.cccr   = {
-		.sdio_vsn       = 2,
-		.multi_block    = 1,
-		.low_speed      = 0,
-		.wide_bus       = 0,
-		.high_power     = 1,
-		.high_speed     = 1,
-	},
-	.cis  = {
-		.vendor         = 0x02d0,
-		.device         = 0x4329,
-	},
-};
-
 // No uSD
 #if 0
 static struct tegra_sdhci_platform_data tegra_sdhci_platform_data0 = {
