@@ -64,15 +64,6 @@ static struct wl12xx_platform_data enterprise_wlan_data __initdata = {
 };
 /* HTC_WIFI_END */
 
-static struct resource wifi_resource[] = {
-	[0] = {
-		.name	= "bcm4329_wlan_irq",
-		.start	= TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PU6),
-		.end	= TEGRA_GPIO_TO_IRQ(TEGRA_GPIO_PU6),
-		.flags	= IORESOURCE_IRQ | IORESOURCE_IRQ_HIGHLEVEL | IORESOURCE_IRQ_SHAREABLE,
-	},
-};
-
 static int emmc_suspend_gpiocfg(void)
 {
 	ENABLE_GPIO(SDMMC4_CLK, CC4, "SDMMC4_CLK", 0, 0, NORMAL);
