@@ -252,6 +252,3 @@ obj-${CONFIG_MACH_VERTEXF}            += nand_partitions.o
 obj-${CONFIG_MACH_ENDEAVORU}          += nand_partitions.o
 obj-${CONFIG_MACH_ENDEAVORTD}         += nand_partitions.o
 
-# Add ramdump from NV patches
-obj-y                                   += nvdumper.o
-
