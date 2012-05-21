@@ -45,7 +45,6 @@ static void (*wifi_status_cb)(int card_present, void *dev_id);
 static void *wifi_status_cb_devid;
 static int enterprise_wifi_status_register(void (*callback)(int , void *), void *);
 
-static int enterprise_wifi_reset(int on);
 /* HTC_WIFI_START */
 //static int enterprise_wifi_power(int on);
 //static int enterprise_wifi_set_carddetect(int val);
@@ -280,12 +279,6 @@ int enterprise_wifi_power(int on)
 }
 EXPORT_SYMBOL(enterprise_wifi_power);
 /* HTC_WIFI_END */
-
-static int enterprise_wifi_reset(int on)
-{
-	pr_debug("%s: do nothing\n", __func__);
-	return 0;
-}
 
 static int __init enterprise_wifi_init(void)
 {
