@@ -250,105 +250,6 @@ static int htcpcbid=0;
 static struct workqueue_struct *workqueue_susp;
 static struct work_struct work_shortsusp, work_defaultsusp;
 
-/*HTC++*/
-static ssize_t debug_gpio_dump(struct device *dev,
-	struct device_attribute *attr,
-	const char *buf, size_t count)
-{	
-	int rValue=0;
-	
-	pr_info("**********************\n");
-	int value = gpio_get_value(TEGRA_GPIO_PM4);
-	pr_info("BB_VDD_EN=%d\n", value);
-	value = gpio_get_value(TEGRA_GPIO_PC1);
-	pr_info("AP2BB_RST_PWRDWNn=%d\n", value);
-	value = gpio_get_value(TEGRA_GPIO_PN0);
-	pr_info("AP2BB_RSTn=%d\n", value);	
-	value = gpio_get_value(TEGRA_GPIO_PN3);
-	pr_info("AP2BB_PWRON=%d\n", value);
-	value = gpio_get_value(TEGRA_GPIO_PN2);
-	pr_info("BB2AP_RADIO_FATAL=%d\n", value);
-	value = gpio_get_value(TEGRA_GPIO_PN1);
-	pr_info("IPC_HSIC_ACTIVE =%d\n", value);
-	value = gpio_get_value(TEGRA_GPIO_PV0);
-	pr_info("HSIC_SUS_REQ=%d\n", value);
-	value = gpio_get_value(TEGRA_GPIO_PC6);
-	pr_info("IPC_BB_WAKE=%d\n", value);
-	value = gpio_get_value(TEGRA_GPIO_PJ0);
-	pr_info("IPC_AP_WAKE=%d\n", value);
-
-	
-	/*set BB2AP_SUSPEND_REQ Pin (TEGRA_GPIO_PV0) to OutPut High to trigger Modem fatal*/
-	int ret=gpio_direction_output(TEGRA_GPIO_PV0,1);
-	pr_info("set BB2AP_SUSPEND_REQ Pin (TEGRA_GPIO_PV0) to OutPut High to trigger Modem fatal\n");
-	if (ret < 0)
-		pr_err("%s: set BB2AP_SUSPEND_REQ Pin to Output error\n", __func__);
-	value = gpio_get_value(TEGRA_GPIO_PV0);
-	pr_info("HSIC_SUS_REQ=%d\n", value);
-
-	/*set host_active for interrupet modem*/
-	value = gpio_get_value(TEGRA_GPIO_PN1);
-	pr_info("Oringial IPC_HSIC_ACTIVE =%d\n", value);
-	if(value==1)rValue=0;
-	else if(value==0)rValue=1;
-
-	gpio_set_value(TEGRA_GPIO_PN1,rValue);
-	msleep(100);
-	gpio_set_value(TEGRA_GPIO_PN1,value);
-	
-	pr_info("**********************\n");
-	
-
-return count;
-}
-static DEVICE_ATTR(debug_gpio_dump, S_IRUSR | S_IWUSR | S_IRGRP,
-		NULL, debug_gpio_dump);
-
-int enable_avdd_dsi_csi_power()
-{
-	 pr_info(MODULE_NAME "[xmm]%s\n",__func__);
-	int ret=0;
-	if (enterprise_dsi_reg == NULL) {
-		enterprise_dsi_reg = regulator_get(NULL, "avdd_dsi_csi");
-		pr_info(MODULE_NAME "[xmm]%s regulator_getED\n",__func__);
-		if (IS_ERR_OR_NULL(enterprise_dsi_reg)) {
-			pr_err("dsi: Could not get regulator avdd_dsi_csi\n");
-				enterprise_dsi_reg = NULL;
-				return PTR_ERR(enterprise_dsi_reg);
-		}
-	}
-	ret = regulator_enable(enterprise_dsi_reg);
-	if (ret < 0) {
-		printk(KERN_ERR
-			"DSI regulator avdd_dsi_csi couldn't be enabled\n",ret);
-		
-	}
-		return ret;
-
-}
-int disable_avdd_dsi_csi_power()
-{
-	 pr_info(MODULE_NAME "[xmm]%s\n",__func__);
-	int ret=0;
-	if (enterprise_dsi_reg == NULL) {
-		enterprise_dsi_reg = regulator_get(NULL, "avdd_dsi_csi");
-		pr_info(MODULE_NAME "[xmm]%s regulator_getED\n",__func__);
-		if (IS_ERR_OR_NULL(enterprise_dsi_reg)) {
-			pr_err("dsi: Could not get regulator avdd_dsi_csi\n");
-				enterprise_dsi_reg = NULL;
-				return PTR_ERR(enterprise_dsi_reg);
-		}
-	}
-	ret = regulator_disable(enterprise_dsi_reg);
-	if (ret < 0) {
-		printk(KERN_ERR
-			"DSI regulator avdd_dsi_csi couldn't be disabled\n",ret);
-
-	}
-	enterprise_dsi_reg=NULL;
-	return ret;
-}
-
 int gpio_config_only_one(unsigned gpio, unsigned long flags, const char *label)
 {
 	int err=0;
@@ -626,9 +527,6 @@ static int baseband_xmm_power_on(struct platform_device *device)
 	}
 #if 1 /*HTC*/	
 	pr_debug(MODULE_NAME " htc_get_pcbid_info= %d\n",htcpcbid );
-	if(htcpcbid < PROJECT_PHASE_XE) {
-		enable_avdd_dsi_csi_power();
-	}
 #endif
 
 	///*HTC*/
@@ -806,9 +704,6 @@ static int baseband_xmm_power_off(struct platform_device *device)
 	spin_unlock_irqrestore(&xmm_lock, flags);
 #if 1 /*HTC*/
 	pr_debug(MODULE_NAME " htc_get_pcbid_info= %d\n", htcpcbid);
-	if(htcpcbid< PROJECT_PHASE_XE) {
-		disable_avdd_dsi_csi_power();
-	}
 #endif
 	/*set Radio fatal Pin to OutPut Low*/
 	ret=gpio_direction_output(TEGRA_GPIO_PN2,0);
@@ -1555,12 +1450,6 @@ static int baseband_xmm_power_driver_probe(struct platform_device *device)
 		return -ENODEV;
 	}
 
-	err = device_create_file(dev, &dev_attr_debug_gpio_dump);
-	if (err < 0) {
-		pr_err("%s - device_create_file failed\n", __func__);
-		return -ENODEV;
-	}
-
 	/* HTC: create device file for host debugging */
 	if (device_create_file(dev,&dev_attr_host_dbg))
 		pr_info(MODULE_NAME"Warning: host attribute can't be created\n");
@@ -1749,7 +1638,6 @@ static int baseband_xmm_power_driver_remove(struct platform_device *device)
 
 	/* delete device file */
 	device_remove_file(dev, &dev_attr_xmm_onoff);
-	device_remove_file(dev, &dev_attr_debug_gpio_dump);
 
 	/* HTC: delete device file */
 	device_remove_file(dev, &dev_attr_host_dbg);
