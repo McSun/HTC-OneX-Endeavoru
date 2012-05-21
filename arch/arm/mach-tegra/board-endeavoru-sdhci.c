@@ -80,16 +80,6 @@ static struct resource wifi_resource[] = {
 	},
 };
 
-static struct platform_device enterprise_wifi_device = {
-	.name           = "bcm4329_wlan",
-	.id             = 1,
-	.num_resources	= 1,
-	.resource	= wifi_resource,
-	.dev            = {
-		.platform_data = &enterprise_wifi_control,
-	},
-};
-
 static int emmc_suspend_gpiocfg(void)
 {
 	ENABLE_GPIO(SDMMC4_CLK, CC4, "SDMMC4_CLK", 0, 0, NORMAL);
