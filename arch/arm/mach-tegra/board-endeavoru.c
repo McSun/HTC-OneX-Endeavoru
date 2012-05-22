@@ -1924,12 +1924,6 @@ static void enterprise_cable_detect_init(void)
 	platform_device_register(&cable_detect_device);
 }
 
-static void enterprise_gps_init(void)
-{
-	//tegra_gpio_enable(TEGRA_GPIO_PE4);
-	//tegra_gpio_enable(TEGRA_GPIO_PE5);
-}
-
 //#if CONFIG_IMC_FLASHLESS
 static struct baseband_power_platform_data tegra_baseband_power_data = {
 	.baseband_type = BASEBAND_XMM,
