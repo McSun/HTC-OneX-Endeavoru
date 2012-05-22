@@ -1130,11 +1130,8 @@ void usb_serial_disconnect(struct usb_interface *interface)
 				 * driver's port_remove method is called.
 				 */
 				if (!port->dev.driver) {
-					int rc;
 
-					port->dev.driver =
-							&serial->type->driver;
-					rc = device_bind_driver(&port->dev);
+					port->dev.driver = &serial->type->driver;
 				}
 				port->dev_state = PORT_UNREGISTERING;
 				device_del(&port->dev);
