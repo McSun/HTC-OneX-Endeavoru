@@ -508,7 +508,6 @@ EXPORT_SYMBOL(gyro_gsensor_kvalue);
 
 static int __init parse_tag_gyro_gsensor_calibration(const struct tag *tag)
 {
-	int i;
 	unsigned char *ptr = (unsigned char *)&tag->u;
 	memcpy(&gyro_gsensor_kvalue[0], ptr, sizeof(gyro_gsensor_kvalue));
 #if 0
