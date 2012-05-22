@@ -324,7 +324,7 @@ static int gpio_o_l_uart(int gpio, char* name)
 	gpio_export(gpio, true);
 }
 
-void modem_on_for_uart_config()
+void modem_on_for_uart_config(void)
 {
 
 
@@ -342,7 +342,7 @@ void modem_on_for_uart_config()
 
 }
 
-int modem_off_for_uart_config()
+int modem_off_for_uart_config(void)
 {
 	int err=0;
 
@@ -389,7 +389,7 @@ int modem_on_for_usb_config(struct gpio *array, size_t num)
 
 }
 
-int config_gpio_for_power_off()
+int config_gpio_for_power_off(void)
 {
 	int err=0;
 
@@ -415,7 +415,7 @@ int config_gpio_for_power_off()
 	return err;
 }
 
-int config_gpio_for_power_on()
+int config_gpio_for_power_on(void)
 {
 	int err=0;
 
