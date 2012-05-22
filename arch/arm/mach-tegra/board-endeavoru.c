@@ -799,6 +799,7 @@ static struct platform_device htc_headset_gpio = {
 	},
 };
 
+#if 0
 /* HTC_HEADSET_MICROP Driver */
 static struct htc_headset_microp_platform_data htc_headset_microp_data = {
 	.eng_cfg			= HS_EDE_U,
@@ -816,6 +817,7 @@ static struct platform_device htc_headset_microp = {
 		.platform_data	= &htc_headset_microp_data,
 	},
 };
+#endif
 
 /* HTC_HEADSET_PMIC Driver */
 static struct htc_headset_pmic_platform_data htc_headset_pmic_data = {
