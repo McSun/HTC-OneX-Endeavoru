@@ -63,7 +63,6 @@ struct nct1008_data {
 	struct regulator *nct_reg;
 	long current_lo_limit;
 	long current_hi_limit;
-
 	int conv_period_ms;
 
 	void (*alert_func)(void *);
@@ -101,7 +100,5 @@ static inline int nct1008_thermal_set_shutdown_temp(struct nct1008_data *data,
 					long shutdown_temp)
 { return -EINVAL; }
 #endif
-
-struct nct1008_data *get_pwr_data();
 
 #endif /* _LINUX_NCT1008_H */
