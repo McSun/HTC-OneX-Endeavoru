@@ -149,7 +149,7 @@ static struct tegra_thermal_data thermal_data = {
 #define BOOT_DEBUG_LOG_LEAVE(fn) \
 	printk(KERN_NOTICE "[BOOT_LOG] Leaving %s\n", fn);
 
-static int enrkey_wakeup()
+static int enrkey_wakeup(void)
 {
 	if (resume_from_deep_suspend) {
 		unsigned long status =
