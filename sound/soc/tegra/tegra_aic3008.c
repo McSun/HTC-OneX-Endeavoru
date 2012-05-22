@@ -528,7 +528,6 @@ static const struct snd_kcontrol_new tegra_controls[] = {
 static int tegra_aic3008_init(struct snd_soc_pcm_runtime *rtd)
 {
 	struct snd_soc_codec *codec = rtd->codec;
-	struct snd_soc_card *card = codec->card;
 
 	int err = 0;
 	AUD_DBG("tegra_codec_init().\n");
