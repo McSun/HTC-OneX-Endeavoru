@@ -615,10 +615,6 @@ static struct snd_soc_card snd_soc_tegra_aic3008 = {
 	.name = "tegra-aic3008",
 	.dai_link = tegra_soc_dai,
 	.num_links = ARRAY_SIZE(tegra_soc_dai),
-	.suspend_pre = tegra_suspend_pre,
-	.suspend_post = tegra_suspend_post,
-	.resume_pre = tegra_resume_pre,
-	.resume_post = tegra_resume_post,
 };
 
 static __devinit int tegra_aic3008_driver_probe(struct platform_device *pdev)
