@@ -1097,7 +1097,6 @@ void Tpi_parse_scratchpad_data(uint8_t *Data)
 static void MhlCbusIsr(void)
 {
 	uint8_t		cbusInt;
-	uint8_t     gotData[4];
 	uint8_t		i;
 	uint8_t		reg71 = I2C_ReadByte(TPI_SLAVE_ADDR, 0x71);
 #ifdef CONFIG_TEGRA_HDMI_MHL_SUPERDEMO
@@ -1127,7 +1126,6 @@ static void MhlCbusIsr(void)
 	if ((cbusInt & BIT_5) || (cbusInt & BIT_6)) {
 		if (!WR_Dcap_Rdy_Int_Done && (cbusInt&BIT_5))
 			return; /* don't clear pending int, until 400ms sw delay expired */
-		gotData[0] = CBusProcessErrors(cbusInt);
 	}
 
 	if (cbusInt & BIT_4) {
