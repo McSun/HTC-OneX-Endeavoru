@@ -655,8 +655,6 @@ static __devinit int tegra_aic3008_driver_probe(struct platform_device *pdev)
 
 err_unregister_switch:
 
-err_fini_utils:
-	tegra_asoc_utils_fini(&machine->util_data);
 err_free_machine:
 	kfree(machine);
 	return ret;
