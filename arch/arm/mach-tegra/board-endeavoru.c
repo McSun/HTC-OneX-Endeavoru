@@ -100,7 +100,7 @@
 
 #define PMC_WAKE_STATUS         0x14
 #define POWER_WAKEUP_ENR 7
-extern global_wakeup_state;
+extern int global_wakeup_state;
 extern int resume_from_deep_suspend;
 /* TI 128x Bluetooth begin */
 #include <linux/ti_wilink_st.h>
