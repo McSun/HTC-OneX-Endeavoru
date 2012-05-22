@@ -111,6 +111,8 @@ static enum power_supply_type pow_supply_type = POWER_SUPPLY_TYPE_MAINS;
 
 void (*arch_reset)(char mode, const char *cmd) = tegra_assert_system_reset;
 
+extern unsigned reboot_battery_first_level;
+
 unsigned (*get_battery_level_cb)(void) = NULL;
 EXPORT_SYMBOL_GPL(get_battery_level_cb);
 
@@ -139,6 +141,7 @@ static int max_cpu_current;
 void (*tegra_reset)(char mode, const char *cmd);
 
 #if defined(CONFIG_RESET_REASON)
+extern struct htc_reboot_params *reboot_params;
 static atomic_t restart_counter = ATOMIC_INIT(0);
 static int in_panic = 0;
 #endif
@@ -413,7 +416,7 @@ static void __init tegra_init_ahb_gizmo_settings(void)
 #if defined(CONFIG_RESET_REASON)
 static inline unsigned get_restart_reason(void)
 {
-
+	return reboot_params->reboot_reason;
 }
 /*
 	This function should not be called outside
@@ -422,7 +425,7 @@ static inline unsigned get_restart_reason(void)
 */
 static inline void set_restart_reason(unsigned int reason)
 {
-
+	reboot_params->reboot_reason = reason;
 	//printk(KERN_NOTICE "%s: TEGRA_IRAM_BASE: 0x%x\n", __func__, TEGRA_IRAM_BASE);
 	//printk(KERN_NOTICE "%s: TEGRA_IRAM_OFFSET_REBOOT_PARAMS: 0x%x\n", __func__, TEGRA_IRAM_OFFSET_REBOOT_PARAMS);
 	//printk(KERN_NOTICE "%s: reboot_params: 0x%p\n", __func__, reboot_params);
@@ -437,7 +440,7 @@ static inline void set_restart_reason(unsigned int reason)
 */
 static inline void set_restart_msg(const char *msg)
 {
-
+	strncpy(reboot_params->msg, msg, sizeof(reboot_params->msg)-1);
 }
 
 /* This function expose others to restart message for entering ramdump mode. */
@@ -473,7 +476,15 @@ unsigned get_reboot_battery_level(void)
 	unsigned signature;
 	unsigned level;
 
-	level = BATTERY_LEVEL_MASK;
+	printk(KERN_INFO "[BATT]%s:the reboot_battery_first_level:0x%x\n"
+				, __func__, reboot_battery_first_level);
+	signature = (reboot_battery_first_level >> BATTERY_LEVEL_SIG_SHIFT)
+			& BATTERY_LEVEL_SIG_MASK;
+
+	if (signature != BATTERY_LEVEL_SIG)
+		return BATTERY_LEVEL_NO_VALUE;
+
+	level = reboot_battery_first_level & BATTERY_LEVEL_MASK;
 
 	if (level > 100)
 		return BATTERY_LEVEL_NO_VALUE;
@@ -485,6 +496,9 @@ void set_reboot_battery_level(unsigned level)
 {
 	if ((level >= 0 && level <= 100) || (level == BATTERY_LEVEL_NO_VALUE)) {
 		level |= BATTERY_LEVEL_SIG << BATTERY_LEVEL_SIG_SHIFT;
+		reboot_params->battery_level = level;
+		printk(KERN_INFO "[BATT]%s:record reboot_battery_first_level :0x%x\n"
+					, __func__, reboot_params->battery_level);
 	}
 }
 

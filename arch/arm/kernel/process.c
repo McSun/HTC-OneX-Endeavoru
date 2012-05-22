@@ -39,6 +39,8 @@
 #include <asm/mach/time.h>
 
 #include <mach/restart.h>
+extern struct htc_reboot_params *reboot_params;
+void set_dirty_state(int dirty);
 
 #ifdef CONFIG_CC_STACKPROTECTOR
 #include <linux/stackprotector.h>
@@ -288,7 +290,10 @@ void machine_halt(void)
 
 void machine_power_off(void)
 {
+	printk("[PWR] clear reboot reason to RESTART_REASON_POWEROFF\n");
+	reboot_params->reboot_reason = RESTART_REASON_POWEROFF;
 	printk("[PWR] clear dirty\n");
+	set_dirty_state(0);
 	machine_shutdown();
 	if (pm_power_off)
 		pm_power_off();

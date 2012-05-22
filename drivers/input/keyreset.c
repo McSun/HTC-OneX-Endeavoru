@@ -32,6 +32,8 @@
 #include <htc/log.h>
 
 extern unsigned engineer_id;
+extern struct htc_reboot_params *reboot_params;
+void set_dirty_state(int dirty);
 
 #define KEYRESET_DELAY 3*HZ
 #define PWROFFLED_DELAY 3*HZ
@@ -90,7 +92,10 @@ static enum hrtimer_restart power_reset_func(struct hrtimer *timer)
 	if (power_reset_requested == 1) {
 		pr_info("[PWR] power reset flag turn on\n");
 		power_reset_requested = 2;
+		pr_info("[PWR] clear reboot reason to RESTART_REASON_REBOOT\n");
+		reboot_params->reboot_reason = RESTART_REASON_REBOOT;
 		pr_info("[PWR] clear dirty\n");
+		set_dirty_state(0);
 	}
 	return HRTIMER_NORESTART;
 }
