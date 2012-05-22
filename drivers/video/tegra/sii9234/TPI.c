@@ -975,55 +975,6 @@ void	CbusReset()
 	}
 }
 
-static uint8_t CBusProcessErrors(uint8_t intStatus)
-{
-	uint8_t result          = 0;
-	uint8_t mscAbortReason  = 0;
-	uint8_t ddcAbortReason  = 0;
-
-
-	intStatus &=  (BIT_6 | BIT_5);
-
-	if (intStatus) {
-
-		if (intStatus & BIT_2) {
-			result = ddcAbortReason = ReadByteCBUS(0x0C);
-			TPI_DEBUG_PRINT(("CBUS DDC ABORT happened, reason:: %02X\n", (int)(ddcAbortReason)));
-			ForceUsbIdSwitchOpen();
-			ReleaseUsbIdSwitchOpen();
-		}
-
-		if (intStatus & BIT_5) {
-			result = mscAbortReason = ReadByteCBUS(0x0D);
-
-			TPI_DEBUG_PRINT(("CBUS:: MSC Transfer ABORTED. Clearing 0x0D\n"));
-			WriteByteCBUS(0x0D, 0xFF);
-			ForceUsbIdSwitchOpen();
-			ReleaseUsbIdSwitchOpen();
-		}
-		if (intStatus & BIT_6) {
-			TPI_DEBUG_PRINT(("CBUS:: MSC Peer sent an ABORT. Clearing 0x0E\n"));
-			WriteByteCBUS(0x0E, 0xFF);
-		}
-
-
-		if (mscAbortReason != 0) {
-			TPI_DEBUG_PRINT(("CBUS:: Reason for ABORT is ....0x%02X = ", (int)mscAbortReason));
-			if (mscAbortReason & (0x01 << 0))
-				TPI_DEBUG_PRINT(("Requestor MAXFAIL - retry threshold exceeded\n"));
-			if (mscAbortReason & (0x01 << 1))
-				TPI_DEBUG_PRINT(("Protocol Error\n"));
-			if (mscAbortReason & (0x01 << 2))
-				TPI_DEBUG_PRINT(("Requestor translation layer timeout\n"));
-			if (mscAbortReason & (0x01 << 7))
-				TPI_DEBUG_PRINT(("Peer sent an abort\n"));
-			if (mscAbortReason & (0x01 << 3))
-				TPI_DEBUG_PRINT(("Undefined opcode\n"));
-		}
-	}
-	return(result);
-}
-
 #ifdef CONFIG_TEGRA_HDMI_MHL_SUPERDEMO
 void Tpi_query_remote_keyInfo(T_MHL_REMOTE_KEY_DATA *data)
 {
