@@ -1392,10 +1392,8 @@ static long aic3008_ioctl(struct file *file, unsigned int cmd,
 			ret = codec_spi_read(i, &data, true);
 			if (ret < 0) {
 				AUD_ERR("read fail on register 0x%X\n", i);
-				0;
 			} else {
 				AUD_DBG("(addr:0x%02X, data:0x%02X)\n", i, data);
-				0;
 			}
 		}
 		AUD_DBG("=============================================\n");
