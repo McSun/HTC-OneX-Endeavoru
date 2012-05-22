@@ -2008,7 +2008,7 @@ static struct platform_device tegra_baseband_power_device = {
 
 static void enterprise_modem_init(void)
 {
-	struct board_info board_info;
+
 //	int w_disable_gpio;
 
 
