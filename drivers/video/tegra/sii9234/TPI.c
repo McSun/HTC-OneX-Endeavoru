@@ -791,10 +791,10 @@ void ProcessMhlStatus(bool connect, bool force)
 
 static	int	Int4Isr(void)
 {
-	uint8_t		reg74, reg72;
+	uint8_t		reg74;
 
 	reg74 = I2C_ReadByte(TPI_SLAVE_ADDR, (0x74));
-	reg72 = I2C_ReadByte(TPI_SLAVE_ADDR, (0x72)); /* mw20110729 for debug when has SCDT,PSTABLE change int only */
+
 	if (0xFF == reg74)
 		return I2C_INACCESSIBLE;
 
