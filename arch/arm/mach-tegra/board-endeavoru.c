@@ -495,22 +495,6 @@ static struct tegra_utmip_config utmi_phy_config[] = {
 	},
 };
 
-static struct resource enterprise_bcm4329_rfkill_resources[] = {
-	{
-		.name   = "bcm4329_nshutdown_gpio",
-		.start  = TEGRA_GPIO_PE6,
-		.end    = TEGRA_GPIO_PE6,
-		.flags  = IORESOURCE_IO,
-	},
-};
-
-static struct platform_device enterprise_bcm4329_rfkill_device = {
-	.name = "bcm4329_rfkill",
-	.id		= -1,
-	.num_resources  = ARRAY_SIZE(enterprise_bcm4329_rfkill_resources),
-	.resource       = enterprise_bcm4329_rfkill_resources,
-};
-
 static unsigned long retry_suspend;
 
 /* TI 128x Bluetooth begin */
