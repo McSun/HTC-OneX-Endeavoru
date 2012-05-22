@@ -147,7 +147,6 @@ static unsigned char shrink_pwm(int val)
 
 static int enterprise_backlight_notify(struct device *unused, int brightness)
 {
-	int cur_sd_brightness = atomic_read(&sd_brightness);
 
 	if (brightness > 0)
 		brightness = shrink_pwm(brightness);
