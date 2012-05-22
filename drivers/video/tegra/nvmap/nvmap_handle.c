@@ -149,7 +149,7 @@ static int handle_page_alloc(struct nvmap_client *client,
 {
 	size_t size = PAGE_ALIGN(h->size);
 	unsigned int nr_page = size >> PAGE_SHIFT;
-	pgprot_t prot;
+//	pgprot_t prot;
 	unsigned int i = 0;
 	struct page **pages;
 
@@ -157,7 +157,7 @@ static int handle_page_alloc(struct nvmap_client *client,
 	if (!pages)
 		return -ENOMEM;
 
-	prot = nvmap_pgprot(h, pgprot_kernel);
+//	prot = nvmap_pgprot(h, pgprot_kernel);
 
 	h->pgalloc.area = NULL;
 	if (contiguous) {
