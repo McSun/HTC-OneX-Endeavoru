@@ -911,7 +911,7 @@ static struct headset_adc_config htc_headset_mgr_config_xe[] = {
 };
 
 
-
+#if 0
 /* HTC_HEADSET_MISC Driver */
 static struct htc_headset_misc_platform_data htc_headset_misc_data = {
 /*
@@ -928,6 +928,7 @@ static struct platform_device htc_headset_misc = {
 		.platform_data	= &htc_headset_misc_data,
 	},
 };
+#endif
 
 /* HTC_HEADSET_MGR Driver */
 static struct platform_device *headset_devices[] = {
