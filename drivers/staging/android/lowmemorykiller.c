@@ -80,7 +80,7 @@ static unsigned long lowmem_deathpending_timeout;
 static unsigned long lowmem_fork_boost_timeout;
 static uint32_t lowmem_fork_boost = 1;
 static int last_min_adj = OOM_ADJUST_MAX + 1;
-static uint32_t lowmem_check_filepages = 0;
+
 #ifdef CONFIG_SWAP
 static int fudgeswap = 512;
 #endif
