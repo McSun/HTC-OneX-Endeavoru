@@ -470,6 +470,7 @@ void set_hardware_reason(const char *msg)
 
 unsigned get_reboot_battery_level(void)
 {
+	unsigned signature;
 	unsigned level;
 
 	level = BATTERY_LEVEL_MASK;
