@@ -41,11 +41,6 @@
 #include <linux/wakelock.h>
 #include <linux/usb/htc_info.h>
 
-#define USB_INFO(fmt, args...) \
-	pr_info(KERN_INFO "[USBOTG] " fmt, ## args)
-#define USB_ERR(fmt, args...) \
-	pr_err("[USBOTG] " fmt, ## args)
-
 #define USB_PHY_WAKEUP		0x408
 #define  USB_ID_INT_EN		(1 << 0)
 #define  USB_ID_INT_STATUS	(1 << 1)
