@@ -219,7 +219,6 @@ static int mhl_sii_power(int on)
 	pr_info("[DISP]%s(%d) IN\n", __func__, __LINE__);
 
 	int rc = 0;
-	int err = 0;
 
 	switch (on) {
 		case 0:
