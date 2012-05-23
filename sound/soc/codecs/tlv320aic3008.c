@@ -599,12 +599,6 @@ static void aic3008_sw_reset(struct snd_soc_codec *codec)
 	aic3008_config(CODEC_SW_RESET, ARRAY_SIZE(CODEC_SW_RESET));
 }
 
-static int aic3008_volatile_register(unsigned int reg)
-{
-	/* check which registers are volatile on the T30S side */
-	return 0;
-}
-
 void aic3008_register_ctl_ops(struct aic3008_ctl_ops *ops)
 {
 	ctl_ops = ops;
@@ -1723,7 +1717,6 @@ static struct snd_soc_codec_driver soc_codec_dev_aic3008 __refdata = {
 	.suspend =	aic3008_suspend,
 	.resume =	aic3008_resume,
 	.set_bias_level = aic3008_set_bias_level,
-	.volatile_register = aic3008_volatile_register,
 };
 
 /*****************************************************************************/
