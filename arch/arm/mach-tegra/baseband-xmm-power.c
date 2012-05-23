@@ -509,7 +509,6 @@ static int baseband_xmm_power_on(struct platform_device *device)
 		= (struct baseband_power_platform_data *)
 			device->dev.platform_data;
 	int ret; /* HTC: ENR#U wakeup src fix */
-	int value;
 
 	pr_debug(MODULE_NAME "%s{\n", __func__);
 
