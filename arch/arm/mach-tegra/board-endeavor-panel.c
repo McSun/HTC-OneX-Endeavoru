@@ -57,7 +57,6 @@ static struct regulator *v_lcmio_1v8 = NULL;
 
 static struct regulator *enterprise_hdmi_reg = NULL;
 static struct regulator *enterprise_hdmi_pll = NULL;
-static struct regulator *enterprise_hdmi_vddio = NULL;
 #endif
 
 #define LCM_TE			TEGRA_GPIO_PJ1
