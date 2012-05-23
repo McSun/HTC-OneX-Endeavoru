@@ -292,7 +292,7 @@ static noinline int tegra_cpu_speed_balance(void)
 }
 
 
-void updateCurrentCPUTotalActiveTime()
+void updateCurrentCPUTotalActiveTime(void)
 {
 	int active_cpus_count = 0;
 
@@ -307,7 +307,7 @@ void updateCurrentCPUTotalActiveTime()
 }
 
 
-void printCPUTotalActiveTime()
+void printCPUTotalActiveTime(void)
 {
 	updateCurrentCPUTotalActiveTime();
 
