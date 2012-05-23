@@ -158,6 +158,7 @@ struct st_data_s {
 	unsigned char	protos_registered;
 	unsigned long ll_state;
 	void *kim_data;
+	struct wake_lock st_wk_lock;
 };
 
 /*
