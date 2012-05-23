@@ -659,12 +659,6 @@ static void enterprise_gyro_sleep_pin(void)
 
 }
 
-static struct i2c_board_info enterprise_i2c0_isl_board_info[] = {
-	{
-		I2C_BOARD_INFO("isl29028", 0x44),
-	}
-};
-
 static void enterprise_comp_irq_init(void)
 {
 	int ret = 0;
