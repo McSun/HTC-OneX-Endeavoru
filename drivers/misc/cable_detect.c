@@ -29,7 +29,6 @@
 #endif
 
 /*#define MHL_INTERNAL_POWER  1*/
-static bool g_vbus = 0;
 static bool g_desk_no_power = 0;
 
 static struct switch_dev dock_switch = {
