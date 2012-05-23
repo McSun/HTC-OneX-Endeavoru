@@ -577,6 +577,9 @@ static int slave_get_config(void *adapter,
 static long mpu_ioctl(struct file *file,
 		      unsigned int cmd, unsigned long arg)
 {
+
+	unsigned long sensors;
+
 	struct i2c_client *client =
 	    (struct i2c_client *) file->private_data;
 	struct mpu_private_data *mpu =
@@ -758,7 +761,6 @@ static long mpu_ioctl(struct file *file,
 	case MPU_SUSPEND:
 	{
 	        printk("[GYRO]MPU_SUSPEND start\n");
-		unsigned long sensors;
 		sensors = ~(mldl_cfg->requested_sensors);
 		retval = mpu3050_suspend(mldl_cfg,
 					client->adapter,
@@ -779,7 +781,6 @@ static long mpu_ioctl(struct file *file,
 	case MPU_RESUME:
 	{
 	        printk("[GYRO]MPU_RESUME start\n");
-		unsigned long sensors;
 		sensors = mldl_cfg->requested_sensors;
 		retval = mpu3050_resume(mldl_cfg,
 					client->adapter,
