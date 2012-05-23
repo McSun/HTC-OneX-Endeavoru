@@ -97,13 +97,6 @@ static struct gpio enterprise_gpios[] = {
 /*global varible for work around*/
 static bool g_display_on = true;
 
-static void mhl_gpio_switch(int on)
-{
-	int i = 0;
-	for(i = 0 ; i < ARRAY_SIZE(enterprise_gpios) ; i++)
-		gpio_set_value(enterprise_gpios[i].gpio, on);
-}
-
 #define BACKLIGHT_MAX 255
 
 #define ORIG_PWM_MAX 255
