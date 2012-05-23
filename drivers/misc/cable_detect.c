@@ -1061,11 +1061,6 @@ static void usb_status_notifier_func(int cable_type)
 	send_cable_connect_notify(cable_type);
 }
 
-static struct t_usb_status_notifier usb_status_notifier = {
-	.name = "cable_detect",
-	.func = usb_status_notifier_func,
-};
-
 static int __init cable_detect_init(void)
 {
 	the_cable_info.connect_type = CONNECT_TYPE_NONE;
