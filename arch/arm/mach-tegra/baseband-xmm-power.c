@@ -286,8 +286,8 @@ int gpio_request_only_one(unsigned gpio,const char *label)
 	int err=0;
 
 	err = gpio_request(gpio, label);
-	if (err)
-		return err;
+
+	return err;
 }
 
 
