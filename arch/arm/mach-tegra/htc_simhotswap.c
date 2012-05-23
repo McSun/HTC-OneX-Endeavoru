@@ -47,9 +47,6 @@
 #define SIM_DETECT SIM_DETECT_LOW_ACTIVE
 
 static int oldStatus=-1, newStatus=-1;//-1=init 0=insert 1=remove
-static uint32_t sim_gpio_table[] = {
-	//GPIO_CFG(VERDI_LTE_SIM_DETECT, 0, GPIO_CFG_INPUT, GPIO_CFG_NO_PULL, GPIO_CFG_2MA),
-};
 
 static int
 htc_hotswap_open( struct inode * inode, struct file * file )
