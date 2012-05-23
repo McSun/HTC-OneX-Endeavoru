@@ -871,7 +871,6 @@ static long mpu_ioctl(struct file *file,
 #ifdef CONFIG_HAS_EARLYSUSPEND
 void mpu3050_early_suspend(struct early_suspend *h)
 {
-  	printk("[GYRO]mpu3050_early_suspend start\n");
 	struct mpu_private_data *mpu = container_of(h,
 						    struct
 						    mpu_private_data,
@@ -889,16 +888,17 @@ void mpu3050_early_suspend(struct early_suspend *h)
 
 	dev_dbg(&this_client->adapter->dev, "%s: %d, %d\n", __func__,
 		h->level, mpu->mldl_cfg.gyro_is_suspended);
-	if (MPU3050_EARLY_SUSPEND_IN_DRIVER)
+	if (MPU3050_EARLY_SUSPEND_IN_DRIVER) {
+
 		(void) mpu3050_suspend(mldl_cfg, this_client->adapter,
 				accel_adapter, compass_adapter,
 				pressure_adapter, TRUE, TRUE, TRUE, TRUE);
-  	printk("[GYRO]mpu3050_early_suspend end\n");
+
+	}
 }
 
 void mpu3050_early_resume(struct early_suspend *h)
 {
-  	printk("[GYRO]mpu3050_later_resume start\n");
 	struct mpu_private_data *mpu = container_of(h,
 						    struct
 						    mpu_private_data,
@@ -917,6 +917,7 @@ void mpu3050_early_resume(struct early_suspend *h)
 	if (MPU3050_EARLY_SUSPEND_IN_DRIVER) {
 		if (pid) {
 			unsigned long sensors = mldl_cfg->requested_sensors;
+
 			(void) mpu3050_resume(mldl_cfg,
 					this_client->adapter,
 					accel_adapter,
@@ -926,12 +927,12 @@ void mpu3050_early_resume(struct early_suspend *h)
 					sensors & ML_THREE_AXIS_ACCEL,
 					sensors & ML_THREE_AXIS_COMPASS,
 					sensors & ML_THREE_AXIS_PRESSURE);
+
 			dev_dbg(&this_client->adapter->dev,
 				"%s for pid %d\n", __func__, pid);
 		}
 	}
 	dev_dbg(&this_client->adapter->dev, "%s: %d\n", __func__, h->level);
-  	printk("[GYRO]mpu3050_later_resume end\n");
 }
 #endif
 
