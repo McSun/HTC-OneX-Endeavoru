@@ -688,12 +688,6 @@ static void enterprise_comp_irq_init(void)
 	gpio_free(TEGRA_GPIO_PJ2);
 }
 
-static void enterprise_isl_init(void)
-{
-	i2c_register_board_info(0, enterprise_i2c0_isl_board_info,
-				ARRAY_SIZE(enterprise_i2c0_isl_board_info));
-}
-
 static int endeavor_s5k3h2y_power_state = 0;
 static int endeavor_s5k3h2y_get_power(void)
 {
