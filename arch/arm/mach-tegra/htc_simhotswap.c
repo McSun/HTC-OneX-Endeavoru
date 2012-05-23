@@ -117,21 +117,6 @@ static void hotswap_work_func(struct work_struct *work)
 	return;
 }
 
-static void config_gpio_table(uint32_t *table, int len)
-{
-/*
-	int n, rc;
-	for (n = 0; n < len; n++) {
-		rc = gpio_tlmm_config(table[n], GPIO_CFG_ENABLE);
-		if (rc) {
-			pr_err("%s: gpio_tlmm_config(%#x)=%d\n",
-				__func__, table[n], rc);
-			break;
-		}
-	}
-*/
-}
-
 static irqreturn_t sim_detect_irq(int irq, void *dev_id)
 {
 	// request by hardware Anson liao
