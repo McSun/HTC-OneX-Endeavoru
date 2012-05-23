@@ -1226,12 +1226,6 @@ static struct pca954x_platform_mode enterprise_pca954x_modes[] = {
 	{ .adap_id = PCA954x_I2C_BUS2, .deselect_on_exit = true, },
 	{ .adap_id = PCA954x_I2C_BUS3, .deselect_on_exit = true, },
 };
-
-static struct pca954x_platform_data enterprise_pca954x_data = {
-	.modes    = enterprise_pca954x_modes,
-	.num_modes      = ARRAY_SIZE(enterprise_pca954x_modes),
-};
-
 	
 /*
 static struct tps61050_platform_data enterprise_tps61050_data = {
