@@ -33,7 +33,6 @@
 
 #include "tlv320aic3008.h"
 #include "tlv320aic3008-reg.h"
-#include "tlv320aic3008-tonegen.h"
 #include <linux/spi-tegra.h>
 #include <../arch/arm/mach-tegra/htc_audio_power.h>
 #include <mach/board_htc.h>
