@@ -89,11 +89,6 @@ static struct gpio panel_init_gpios[] = {
     {MHL_3V3_EN,    GPIOF_OUT_INIT_HIGH,    "mhl_3v3_en"},
 };
 
-static struct gpio enterprise_gpios[] = {
-	{MHL_1V2_EN,	GPIOF_OUT_INIT_LOW,	"mhl_1v2_en"},
-	{MHL_3V3_EN,	GPIOF_OUT_INIT_LOW,	"mhl_3v3_en"},
-};
-
 /*global varible for work around*/
 static bool g_display_on = true;
 
