@@ -1219,13 +1219,6 @@ static struct endeavor_cam_gpio endeavor_cam_gpio_input_data[] = {
 	[2] = TEGRA_CAMERA_GPIO(RAW_INTR0, "RAW_INTR0", 0),
 	[3] = TEGRA_CAMERA_GPIO(RAW_INTR1, "RAW_INTR1", 0),
 };
-
-static struct pca954x_platform_mode enterprise_pca954x_modes[] = {
-	{ .adap_id = PCA954x_I2C_BUS0, .deselect_on_exit = true, },
-	{ .adap_id = PCA954x_I2C_BUS1, .deselect_on_exit = true, },
-	{ .adap_id = PCA954x_I2C_BUS2, .deselect_on_exit = true, },
-	{ .adap_id = PCA954x_I2C_BUS3, .deselect_on_exit = true, },
-};
 	
 /*
 static struct tps61050_platform_data enterprise_tps61050_data = {
