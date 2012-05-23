@@ -5,9 +5,6 @@
 
 MODULE_LICENSE("GPL");
 
-/* parameter */
-static unsigned int wakeup_after;
-
 
 static int wakeup_delay_time = 0;
 
