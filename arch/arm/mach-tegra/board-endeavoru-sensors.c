@@ -969,7 +969,6 @@ struct ad5823_platform_data endeavor_ad5823_data = {
 
 static int endeavor_s5k6a1gx03_power_on(void)
 {
-    int ret;
     pr_info("[CAM] s5k6a1g power on ++\n");
     gpio_direction_output(FRONT_CAM_RST_GPIO, 0);
     gpio_direction_output(CAM_SEL_GPIO, 0);
@@ -979,6 +978,7 @@ static int endeavor_s5k6a1gx03_power_on(void)
 	tegra_gpio_disable(CAM_MCLK_GPIO);
 
 #ifdef CAMERA_REGULATOR
+    int ret;
     pr_info("[CAM] use regurator to get power\n");
     /* analog */
 	ret = regulator_enable(cam_a2v85_en);
