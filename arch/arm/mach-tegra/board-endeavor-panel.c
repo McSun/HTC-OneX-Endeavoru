@@ -94,8 +94,6 @@ static struct gpio enterprise_gpios[] = {
 	{MHL_3V3_EN,	GPIOF_OUT_INIT_LOW,	"mhl_3v3_en"},
 };
 
-static atomic_t sd_brightness = ATOMIC_INIT(255);
-
 /*global varible for work around*/
 static bool g_display_on = true;
 
