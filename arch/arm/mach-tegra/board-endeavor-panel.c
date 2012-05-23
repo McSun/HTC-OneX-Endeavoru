@@ -284,11 +284,6 @@ static struct resource enterprise_disp2_resources[] = {
 	},
 };
 
-static struct tegra_dc_sd_settings enterprise_sd_settings = {
-	.enable = 0, /* Normal mode operation */
-	.bl_device = &enterprise_disp1_backlight_device,
-};
-
 static struct tegra_fb_data enterprise_hdmi_fb_data = {
 	.win		= 0,
 	.xres		= 1366,
