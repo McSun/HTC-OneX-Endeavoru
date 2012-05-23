@@ -317,10 +317,11 @@ static int gpio_o_l_uart(int gpio, char* name)
 	if (ret < 0) {
 		pr_err(" %s: gpio_direction_output failed %d\n", __func__, ret);
 		gpio_free(gpio);
-		return ret;
 	}
 	tegra_gpio_enable(gpio);
 	gpio_export(gpio, true);
+
+	return ret;
 }
 
 void modem_on_for_uart_config(void)
