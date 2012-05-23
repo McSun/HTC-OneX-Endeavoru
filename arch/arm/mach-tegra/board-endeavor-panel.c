@@ -2784,7 +2784,6 @@ static void enterprise_panel_onchg_suspend(struct early_suspend *h)
 static void enterprise_panel_onchg_resume(struct early_suspend *h)
 {
 	DISP_INFO_IN();
-	unsigned i;
 
 	fb_blank(registered_fb[0], FB_BLANK_UNBLANK);
 
