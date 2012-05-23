@@ -247,11 +247,6 @@ obj-$(CONFIG_HTC_HEADSET_PMIC) += htc_headset_pmic.o
 obj-$(CONFIG_HTC_HEADSET_MISC) += htc_headset_misc.o
 obj-$(CONFIG_HTC_HEADSET_8X60) += htc_headset_8x60.o
 
-#Add nand_partitions.c
-obj-${CONFIG_MACH_VERTEXF}            += nand_partitions.o
-obj-${CONFIG_MACH_ENDEAVORU}          += nand_partitions.o
-obj-${CONFIG_MACH_ENDEAVORTD}         += nand_partitions.o
-
 # Add ramdump from NV patches
 obj-y                                   += nvdumper.o
 

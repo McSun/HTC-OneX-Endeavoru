@@ -2213,9 +2213,6 @@ static struct platform_device enr_reset_keys_device = {
 	.dev.platform_data = &enr_reset_keys_pdata,
 };
 
-extern int emmc_partition_read_proc(char *page, char **start, off_t off,
-			   int count, int *eof, void *data);
-
 static void enr_u_basic_gpio_setup(void)
 {
 	int pcbid = htc_get_pcbid_info();
@@ -2318,12 +2315,6 @@ static void __init tegra_enterprise_init(void)
 	enterprise_cable_detect_init();
 #endif
 	struct proc_dir_entry* proc;
-	proc = create_proc_read_entry("emmc", 0, NULL, emmc_partition_read_proc, NULL);
-	if (proc) {
-		printk(KERN_ALERT "[mtd] mount /proc/emmc successfully\n");
-	} else {
-		printk(KERN_ALERT "[mtd] mount /proc/emmc failed\n");
-	}
 
 	proc = create_proc_read_entry("dying_processes", 0, NULL, dying_processors_read_proc, NULL);
 	if (!proc)
