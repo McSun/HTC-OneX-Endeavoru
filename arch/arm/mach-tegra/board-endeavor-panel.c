@@ -2732,9 +2732,10 @@ struct early_suspend enterprise_panel_onchg_suspender;
 
 static void enterprise_panel_early_suspend(struct early_suspend *h)
 {
+	struct backlight_device *bl = platform_get_drvdata(&enterprise_disp1_backlight_device);
+
 	DISP_INFO_IN();
 
-	struct backlight_device *bl = platform_get_drvdata(&enterprise_disp1_backlight_device);
 	if (bl && bl->props.bkl_on) {
 		bl->props.bkl_on = 0;
 		del_timer_sync(&bkl_timer);
@@ -2752,9 +2753,10 @@ static void enterprise_panel_early_suspend(struct early_suspend *h)
 
 static void enterprise_panel_late_resume(struct early_suspend *h)
 {
+	unsigned i;
+
 	DISP_INFO_IN();
 
-	unsigned i;
 	for (i = 0; i < num_registered_fb; i++)
 		fb_blank(registered_fb[i], FB_BLANK_UNBLANK);
 
@@ -2765,9 +2767,10 @@ static void enterprise_panel_late_resume(struct early_suspend *h)
 #ifdef CONFIG_HTC_ONMODE_CHARGING
 static void enterprise_panel_onchg_suspend(struct early_suspend *h)
 {
+	struct backlight_device *bl = platform_get_drvdata(&enterprise_disp1_backlight_device);
+
 	DISP_INFO_IN();
 
-	struct backlight_device *bl = platform_get_drvdata(&enterprise_disp1_backlight_device);
 	if (bl && bl->props.bkl_on) {
 		bl->props.bkl_on = 0;
 		del_timer_sync(&bkl_timer);
@@ -2797,6 +2800,8 @@ int __init enterprise_panel_init(void)
 {
 	int err;
 	struct resource __maybe_unused *res;
+	int i;
+	int pin_count;
 
 
 	if (board_mfg_mode() == 5 && !(board_zchg_mode() & 0x1)) {
@@ -2816,13 +2821,13 @@ int __init enterprise_panel_init(void)
 		DISP_ERR("gpio request failed\n");
 		goto failed;
 	}
-	int i = 0;
-	int pin_count = ARRAY_SIZE(panel_init_gpios);
+
+	pin_count = ARRAY_SIZE(panel_init_gpios);
 	for (i = 0; i < pin_count; i++) {
 		tegra_gpio_enable(panel_init_gpios[i].gpio);
 	}
 
-	DISP_INFO_LN("panel id 0x%08x\n", g_panel_id);
+	DISP_INFO_LN("panel id 0x%lx\n", g_panel_id);
 
 #ifdef CONFIG_HAS_EARLYSUSPEND
 	enterprise_panel_early_suspender.suspend = enterprise_panel_early_suspend;
@@ -3001,7 +3006,7 @@ int __init enterprise_panel_init(void)
 				ARRAY_SIZE(enterprise_bl_devices));
 	INIT_WORK(&bkl_work, bkl_do_work);
 	bkl_wq = create_workqueue("bkl_wq");
-	setup_timer(&bkl_timer, bkl_update, NULL);
+	setup_timer(&bkl_timer, bkl_update, 0);
 
 failed:
 	DISP_INFO_OUT();
