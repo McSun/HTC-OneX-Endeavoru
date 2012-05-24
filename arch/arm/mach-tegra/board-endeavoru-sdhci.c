@@ -50,7 +50,7 @@ static int enterprise_wifi_status_register(void (*callback)(int , void *), void 
 //static int enterprise_wifi_set_carddetect(int val);
 int enterprise_wifi_power(int on);
 int enterprise_wifi_set_carddetect(int val);
-int enterprise_wifi_status(struct device *dev);
+unsigned int enterprise_wifi_status(struct device *dev);
 static int enterprise_wifi_cd;		/* WIFI virtual 'card detect' status */
 /* HTC_WIFI_END */
 
@@ -206,7 +206,7 @@ static int enterprise_wifi_status_register(
 }
 
 /* HTC_WIFI_START */
-int enterprise_wifi_status(struct device *dev)
+unsigned int enterprise_wifi_status(struct device *dev)
 {
 	return enterprise_wifi_cd;
 }
@@ -345,7 +345,7 @@ EXPORT_SYMBOL(blue_pincfg_uartc_suspend);
 void blue_pincfg_uartc_gpio_request(void) {
 
         /* BT_EN GPIO-U.00 O(L) */
-        long err = 0;
+        int err = 0;
 
 	/* UART3_CTS_N GPIO-A.01 */
         err = gpio_request(TEGRA_GPIO_PA1, "bt");
