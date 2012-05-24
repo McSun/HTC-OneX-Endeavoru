@@ -773,7 +773,8 @@ int tegra_auto_hotplug_init(struct mutex *cpu_lock)
 	hp_init_stats();
 	pr_info(CPU_HOTPLUG_TAG"Tegra auto-hotplug initialized: %s\n",
 		(hp_state == TEGRA_HP_DISABLED) ? "disabled" : "enabled");
-	for (i = 0; i <= CONFIG_NR_CPUS; i++) {
+
+	for (i = 0; i < CONFIG_NR_CPUS; i++) {
 		cpu_hp_active_time_stats[i].this_active_Time = 0;
 		cpu_hp_active_time_stats[i].total_active_Time = 0;
 	}
