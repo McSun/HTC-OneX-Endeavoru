@@ -216,9 +216,9 @@ int __init A_PROJECT_keys_init(void)
 
 static int mhl_sii_power(int on)
 {
-	pr_info("[DISP]%s(%d) IN\n", __func__, __LINE__);
-
 	int rc = 0;
+
+	pr_info("[DISP]%s(%d) IN\n", __func__, __LINE__);
 
 	switch (on) {
 		case 0:
@@ -1104,6 +1104,9 @@ static void __init enterprise_uart_init(void)
 {
 	int i;
 	struct clk *c;
+#ifdef CONFIG_BT_CTS_WAKEUP
+	int board_id;
+#endif
 
 	for (i = 0; i < ARRAY_SIZE(uart_parent_clk); ++i) {
 		c = tegra_get_clock_by_name(uart_parent_clk[i].name);
@@ -1124,7 +1127,7 @@ static void __init enterprise_uart_init(void)
 	tegra_uarte_device.dev.platform_data = &enterprise_uart_pdata;
 
 #ifdef CONFIG_BT_CTS_WAKEUP
-	int board_id = htc_get_pcbid_info();
+	board_id = htc_get_pcbid_info();
 
 	enterprise_bt_uart_pdata = enterprise_uart_pdata;
 	if (board_id >= PROJECT_PHASE_XC) {// XC
@@ -1989,7 +1992,7 @@ static struct platform_device tegra_baseband_power_device = {
 
 static void enterprise_modem_init(void)
 {
-
+	int ret;
 //	int w_disable_gpio;
 
 
@@ -2042,7 +2045,7 @@ static void enterprise_modem_init(void)
 #if 1		
 		// TEGRA_GPIO_PI5
 		printk(KERN_INFO"%s: gpio config for sim_det#.", __func__);
-                int ret;
+
 		ret = gpio_request(TEGRA_GPIO_PI5, "sim_det#");
 		if (ret < 0)
 			pr_err("[FLT] %s: gpio_request failed for gpio %s\n",
@@ -2241,7 +2244,8 @@ static void enr_u_basic_gpio_setup(void)
 static void __init tegra_enterprise_init(void)
 {
 	int board_id = 0;
-	struct kobject *properties_kobj;  	
+	struct kobject *properties_kobj;
+	struct proc_dir_entry *proc;
 
 	tegra_thermal_init(&thermal_data);
 	BOOT_DEBUG_LOG_ENTER("<machine>.init_machine");
@@ -2292,7 +2296,7 @@ static void __init tegra_enterprise_init(void)
 	enterprise_sensors_init();
 	if (platform_device_register(&enr_reset_keys_device))
 		printk(KERN_WARNING "%s: register reset key fail\n", __func__);
-        properties_kobj = kobject_create_and_add("board_properties", NULL);
+		properties_kobj = kobject_create_and_add("board_properties", NULL);
 	if (properties_kobj) {
 		if (htc_get_pcbid_info() >= PROJECT_PHASE_XC) {
 			sysfs_create_group(properties_kobj, &Aproj_properties_attr_group_XC);
@@ -2314,7 +2318,6 @@ static void __init tegra_enterprise_init(void)
 #if defined(CONFIG_CABLE_DETECT_ACCESSORY)
 	enterprise_cable_detect_init();
 #endif
-	struct proc_dir_entry* proc;
 
 	proc = create_proc_read_entry("dying_processes", 0, NULL, dying_processors_read_proc, NULL);
 	if (!proc)
