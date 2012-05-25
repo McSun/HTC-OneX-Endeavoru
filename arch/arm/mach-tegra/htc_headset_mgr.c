@@ -901,7 +901,7 @@ static int insert_1wire_work_func(void)
 			HS_LOG("Read %xh bytes, count:%d, %s\n",r,count,b_buf);
 
 			for(cnt = 0; cnt < r; cnt++){
-				HS_LOG("Read:0x%x, %d, %s\n", (int) b_buf[cnt], (int)b_buf[cnt], b_buf[cnt]);
+				HS_LOG("Read:0x%x, %d, %s\n", (int)b_buf, (int)b_buf, b_buf);
 
 				if (hi->pdata.headset_config_1wire_num)
 					for (i = 0; i < hi->pdata.headset_config_1wire_num; i++)
