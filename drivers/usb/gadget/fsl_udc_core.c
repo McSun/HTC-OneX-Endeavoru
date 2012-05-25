@@ -2287,7 +2287,6 @@ static void fsl_udc_charger_detect_work(struct work_struct* work)
  */
 static void fsl_udc_restart(struct fsl_udc *udc)
 {
-	unsigned long flags = 0;
 	USB_INFO("fsl_udc_restart");
 	/* setup the controller in the device mode */
 	dr_controller_setup(udc);
@@ -2958,7 +2957,6 @@ static void usb_do_work(struct work_struct *w)
 }
 static void usb_start(struct fsl_udc *udc)
 {
-	unsigned long flags;
 	USB_DEBUG("usb_start\n");
 	/*spin_lock_irqsave(&udc->lock, flags);*/ /* htc */
 	udc->flags |= USB_FLAG_START;
@@ -3015,7 +3013,7 @@ static void usb_vbus_state_work(struct work_struct *w)
 {
 	struct fsl_udc *udc = container_of(w, struct fsl_udc, check_vbus_work);
 	int _vbus;
-	unsigned long flags = 0;
+
 	if(!udc)
 		return;
 	_vbus = vbus_enabled();
