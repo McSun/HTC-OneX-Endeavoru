@@ -320,7 +320,7 @@ static void baseband_usb_driver_disconnect(struct usb_interface *intf)
 static int baseband_usb_driver_suspend(struct usb_interface *intf,
 	pm_message_t message)
 {
-	int i, err, susp_count;
+	int i, susp_count;
 
 	save_dbg(dbg_flag);/* HTC */
 	pr_debug("%s intf %p\n", __func__, intf);
