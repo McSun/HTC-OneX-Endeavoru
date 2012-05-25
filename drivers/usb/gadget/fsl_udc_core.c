@@ -1670,8 +1670,6 @@ static void udc_test_mode(struct fsl_udc *udc, u32 test_mode)
 	struct fsl_ep *ep;
 	u32 portsc, bitmask;
 	unsigned long timeout;
-	void __iomem *base = 0x7D000000;
-	u32 val;
 
 	/* Ack the ep0 IN */
 	if (ep0_prime_status(udc, EP_DIR_IN))
@@ -1687,7 +1685,7 @@ static void udc_test_mode(struct fsl_udc *udc, u32 test_mode)
 	/* Wait until ep0 IN endpoint txfr is complete */
 	while (!(fsl_readl(&dr_regs->endptcomplete) & bitmask)) {
 		if (time_after(jiffies, timeout)) {
-			USB_ERR("Timeout for Ep0 IN Ack\n");
+			pr_err("Timeout for Ep0 IN Ack\n");
 			break;
 		}
 		cpu_relax();
@@ -1701,10 +1699,6 @@ static void udc_test_mode(struct fsl_udc *udc, u32 test_mode)
 		VDBG("TEST_K\n");
 		break;
 	case PORTSCX_PTC_SEQNAK:
-		val = readl(IO_ADDRESS(base + UTMIP_HSRX_CFG1));
-		val &= ~UTMIP_HS_SYNC_START_DLY(~0);
-		val |= UTMIP_HS_SYNC_START_DLY(0x2);
-		writel(val, IO_ADDRESS(base + UTMIP_HSRX_CFG1));
 		VDBG("TEST_SE0_NAK\n");
 		break;
 	case PORTSCX_PTC_PACKET:
@@ -1765,7 +1759,7 @@ static void udc_test_mode(struct fsl_udc *udc, u32 test_mode)
 	 * See USB 2.0 spec, section 9.4.9 for test modes operation in "Set Feature"
 	 * See USB 2.0 spec, section 7.1.20 for test modes.
 	 */
-	USB_INFO("udc entering the test mode, power cycle to exit test mode\n");
+	pr_info("udc entering the test mode, power cycle to exit test mode\n");
 	return;
 stall:
 	ep0stall(udc);
