@@ -874,9 +874,9 @@ static int insert_1wire_work_func(void)
 
 	if (uart_check == 0)
 		while (1){
-			if(hi->detect_type ==99){
+			if(hi->detect_type == 99){
 				uart_check = 1;
-				hi->detect_type == HEADSET_ADC;
+				hi->detect_type = HEADSET_ADC;
 				msleep(1000);
 				break;
 			}
