@@ -229,9 +229,6 @@ static int baseband_usb_driver_probe(struct usb_interface *intf,
 	const struct usb_device_id *id)
 {
 	int i = g_i;
-	/* 77969-7 patch */
-	struct urb *urb;
-	/* 77969-7 patch */
 
 	pr_debug("%s(%d) with suspend conunt fix (do not return BUSY) { intf %p id %p g_i=%d max_intfs=%d\n", __func__, __LINE__, intf, id, i,max_intfs);
 
