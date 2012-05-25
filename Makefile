@@ -339,13 +339,17 @@ CHECK		= sparse
 
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
-MODFLAGS	= -DMODULE -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -mtune=cortex-a8 -marm -march=armv7-a -mfpu=neon -ftree-vectorize -mvectorize-with-neon-quad -funroll-loops
+MODFLAGS	= -DMODULE -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -mtune=cortex-a9 -marm -march=armv7-a -mfpu=neon -ftree-vectorize -mvectorize-with-neon-quad -funroll-loops
 CFLAGS_MODULE   = $(MODFLAGS)
 AFLAGS_MODULE   = $(MODFLAGS)
 LDFLAGS_MODULE  = -T $(srctree)/scripts/module-common.lds
-CFLAGS_KERNEL	= -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -mtune=cortex-a8 -marm -march=armv7-a -mfpu=neon -ftree-vectorize -mvectorize-with-neon-quad -funroll-loops
+CFLAGS_KERNEL	= -fgcse-lm -fgcse-sm -fsched-spec-load -fforce-addr -ffast-math -fsingle-precision-constant -mtune=cortex-a9 -marm -march=armv7-a -mfpu=neon -ftree-vectorize -mvectorize-with-neon-quad -funroll-loops
 AFLAGS_KERNEL	=
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
+XX_A9		= -marm -mtune=cortex-a9 -mfpu=neon -march=armv7-a
+XX_GRAPHITE	= -finline-functions -funswitch-loops -fpredictive-commoning \
+		  -fgcse-after-reload -ftree-vectorize -fipa-cp-clone
+XX_MODULO	= -fmodulo-sched -fmodulo-sched-allow-regmoves
 
 
 # Use LINUXINCLUDE when you must reference the include/ directory.
@@ -360,7 +364,8 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-strict-aliasing -fno-common \
 		   -Werror-implicit-function-declaration \
 		   -Wno-format-security \
-		   -fno-delete-null-pointer-checks
+		   -fno-delete-null-pointer-checks \
+		    $(XX_A9) $(XX_GRAPHITE) $(XX_MODULO)
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
 KBUILD_AFLAGS   := -D__ASSEMBLY__
