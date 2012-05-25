@@ -550,6 +550,65 @@ int aic3008_setMode(int cmd, int idx, int is_call_mode)
 }
 EXPORT_SYMBOL_GPL(aic3008_setMode);
 
+/* Access function pointed by ctl_ops to call control operations */
+static int aic3008_config(CODEC_SPI_CMD *cmds, int size)
+{
+	int i, retry, ret;
+	unsigned char data;
+	if(!aic3008_power_ctl->isPowerOn)
+	{
+		AUD_INFO("aic3008_config: AIC3008 is power off now");
+		return -EINVAL;
+	}
+
+	if (!codec_spi_dev) {
+		AUD_ERR("no spi device\n");
+		return -EFAULT;
+	}
+
+	if (cmds == NULL) {
+		AUD_ERR("invalid spi parameters\n");
+		return -EINVAL;
+	}
+
+	/* large dsp image use bulk mode to transfer */
+	if (size < 1000) {
+		for (i = 0; i < size; i++) {
+			switch (cmds[i].act) {
+			case 'w':
+				codec_spi_write(cmds[i].reg, cmds[i].data, true);
+				break;
+			case 'r':
+				for (retry = AIC3008_MAX_RETRY; retry > 0; retry--) {
+					ret = codec_spi_read(cmds[i].reg, &data, true);
+					if (ret < 0) {
+						AUD_ERR("read fail %d, retry\n", ret);
+						hr_msleep(1);
+					} else if (data == cmds[i].data) {
+						AUD_DBG("data == cmds\n");
+						break;
+					}
+				}
+				if (retry <= 0)
+					AUD_DBG("3008 power down procedure,"
+							" flag 0x%02X=0x%02X(0x%02X)\n",
+							cmds[i].reg, ret, cmds[i].data);
+				break;
+			case 'd':
+				msleep(cmds[i].data);
+				break;
+			default:
+				break;
+			}
+		}
+	} else {
+		/* use bulk to transfer large data */
+		spi_write_table_parsepage(cmds, size);
+		AUD_DBG("Here is bulk mode\n");
+	}
+	return 0;
+}
+
 void aic3008_set_mic_bias(int on)
 {
 	if (on) {
@@ -633,65 +692,6 @@ static void spi_aic3008_allow_sleep(void)
 {
 	wake_unlock(&codec_clk.idlelock);
 	wake_unlock(&codec_clk.wakelock);
-}
-
-/* Access function pointed by ctl_ops to call control operations */
-static int aic3008_config(CODEC_SPI_CMD *cmds, int size)
-{
-	int i, retry, ret;
-	unsigned char data;
-	if(!aic3008_power_ctl->isPowerOn)
-	{
-		AUD_INFO("aic3008_config: AIC3008 is power off now");
-		return -EINVAL;
-	}
-
-	if (!codec_spi_dev) {
-		AUD_ERR("no spi device\n");
-		return -EFAULT;
-	}
-
-	if (cmds == NULL) {
-		AUD_ERR("invalid spi parameters\n");
-		return -EINVAL;
-	}
-
-	/* large dsp image use bulk mode to transfer */
-	if (size < 1000) {
-		for (i = 0; i < size; i++) {
-			switch (cmds[i].act) {
-			case 'w':
-				codec_spi_write(cmds[i].reg, cmds[i].data, true);
-				break;
-			case 'r':
-				for (retry = AIC3008_MAX_RETRY; retry > 0; retry--) {
-					ret = codec_spi_read(cmds[i].reg, &data, true);
-					if (ret < 0) {
-						AUD_ERR("read fail %d, retry\n", ret);
-						hr_msleep(1);
-					} else if (data == cmds[i].data) {
-						AUD_DBG("data == cmds\n");
-						break;
-					}
-				}
-				if (retry <= 0)
-					AUD_DBG("3008 power down procedure,"
-							" flag 0x%02X=0x%02X(0x%02X)\n",
-							cmds[i].reg, ret, cmds[i].data);
-				break;
-			case 'd':
-				msleep(cmds[i].data);
-				break;
-			default:
-				break;
-			}
-		}
-	} else {
-		/* use bulk to transfer large data */
-		spi_write_table_parsepage(cmds, size);
-		AUD_DBG("Here is bulk mode\n");
-	}
-	return 0;
 }
 
 static int aic3008_config_ex(CODEC_SPI_CMD *cmds, int size)
