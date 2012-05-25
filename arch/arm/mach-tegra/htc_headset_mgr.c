@@ -711,8 +711,7 @@ static void button_35mm_work_func(struct work_struct *work)
 
 	if (hi->hs_35mm_type == HEADSET_UNPLUG &&
 	    hi->h2w_35mm_type == HEADSET_UNPLUG) {
-//		kfree(works);
-		works->key_code = NULL;
+
 		HS_LOG("Ignore key event (HEADSET_UNPLUG)");
 		return;
 	}
@@ -742,9 +741,6 @@ static void button_35mm_work_func(struct work_struct *work)
 		else
 			HS_LOG("3.5mm RC: WRONG Button Release");
 	}
-
-//	kfree(works);
-	works->key_code = NULL;
 }
 
 static void debug_work_func(struct work_struct *work)
