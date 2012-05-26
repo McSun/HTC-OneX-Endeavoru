@@ -297,8 +297,6 @@ static irqreturn_t tegra_otg_irq(int irq, void *data)
 void tegra_otg_check_vbus_detection(void)
 {
 	pr_info("[USBOTG] %s \n", __func__);
-	unsigned long flags;
-
 	tegra_otg_enable_clk();
 }
 EXPORT_SYMBOL(tegra_otg_check_vbus_detection);
@@ -307,7 +305,7 @@ static int tegra_otg_set_peripheral(struct otg_transceiver *otg,
 				struct usb_gadget *gadget)
 {
 	struct tegra_otg_data *tegra;
-	unsigned long val, flags;
+	unsigned long val;
 
 	tegra = container_of(otg, struct tegra_otg_data, otg);
 	otg->gadget = gadget;
