@@ -666,14 +666,6 @@ static struct usb_ether_platform_data rndis_pdata = {
 	.vendorID = USB_VENDOR_ID,
 	.vendorDescr = USB_MANUFACTURER_NAME,
 };
-
-static struct platform_device rndis_device = {
-	.name   = "rndis",
-	.id     = -1,
-	.dev    = {
-		.platform_data  = &rndis_pdata,
-	},
-};
 #endif
 
 static struct tegra_i2c_platform_data enterprise_i2c1_platform_data = {
