@@ -412,8 +412,8 @@ static unsigned long last_jiffies;
 static unsigned long period_jiffies = 0.35 * HZ;
 static void report_p_input(int nowstatus)
 {
-	mutex_lock(&ps_report_input_mutex);
 	struct cm3628_info *lpi = lp_info;
+	mutex_lock(&ps_report_input_mutex);
 	
 	if(laststatus != nowstatus) {
 		D("[PS][cm3628]  %s: report proximity status : %s\n", __func__, nowstatus ? "FAR" : "NEAR");
