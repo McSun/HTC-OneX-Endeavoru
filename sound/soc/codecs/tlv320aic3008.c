@@ -231,56 +231,6 @@ static int32_t spi_write_table_parsepage(CODEC_SPI_CMD *cmds, int num)
 	return status;
 }
 
-/* write a register then read a register, compare them ! */
-static int32_t spi_write_read_list(CODEC_SPI_CMD *cmds, int num)
-{
-	int i;
-	int rc;
-	unsigned char write_buffer[2];
-	unsigned char read_result[2] = { 0, 0 };
-
-	if (!codec_spi_dev)
-		return 0;
-
-	codec_spi_dev->bits_per_word = 16;
-	for (i = 0; i < num; i++) {
-		/*if writing page, then don't read its value */
-		switch (cmds[i].act) {
-		case 'w':
-			write_buffer[1] = cmds[i].reg << 1;
-			write_buffer[0] = cmds[i].data;
-			if (cmds[i].reg == 0x00 || cmds[i].reg == 0x7F) {
-				rc = spi_write(codec_spi_dev, write_buffer, sizeof(write_buffer));
-				if (rc < 0)
-					return rc;
-				if(cmds[i].reg == 0x00)
-				{
-					AUD_DBG("------ write page: 0x%02X ------\n", cmds[i].data);
-				}
-				else if(cmds[i].reg == 0x7F)
-				{
-					AUD_DBG("------ write book: 0x%02X ------\n", cmds[i].data);
-				}
-			} else {
-				rc = spi_write_then_read(codec_spi_dev, write_buffer, 2, read_result, 2);
-				if (rc < 0)
-					return rc;
-
-				if (read_result[0] != cmds[i].data)
-					AUD_INFO("incorrect value,reg 0x%02x, write 0x%02x, read 0x%02x",
-						cmds[i].reg, cmds[i].data, read_result[0]);
-			}
-			break;
-		case 'd':
-			msleep(cmds[i].data);
-			break;
-		default:
-			break;
-		}
-	}
-	return 0;
-}
-
 /*
  * This function arranges the address and data bytes in a large command list
  * and use kernel SPI API,
