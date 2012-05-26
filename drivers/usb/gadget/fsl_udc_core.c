@@ -3044,9 +3044,10 @@ static ssize_t show_charger(struct device *dev, struct device_attribute *attr, c
 static ssize_t store_charger(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
-	USB_INFO("store_charger\n");
 	int state;
 	sscanf(buf, "%d", &(state));
+	USB_INFO("store_charger\n");
+
 	if(state)
 	{
 		udc_controller->connect_type = CONNECT_TYPE_USB;
