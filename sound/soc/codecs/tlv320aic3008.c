@@ -898,7 +898,7 @@ static int aic3008_set_config(int config_tbl, int idx, int en)
 		if(!aic3008_power_ctl->isPowerOn)
 		{
 			AUD_ERR("[TX] AIC3008 is power off now, can't do IO CONFIG TX = %d, please check this condition!!", idx);
-			AUD_ERR("[TX] Since IO CONFIG TX = %d can't be done, it maybe no sound on device");
+			AUD_ERR("[TX] Since IO CONFIG TX = %d can't be done, it maybe no sound on device", idx);
 			break;
 		}
 		if (en) {
@@ -923,7 +923,7 @@ static int aic3008_set_config(int config_tbl, int idx, int en)
 		if(!aic3008_power_ctl->isPowerOn)
 		{
 			AUD_ERR("[RX] AIC3008 is power off now, can't do IO CONFIG RX = %d, please check this condition!!", idx);
-			AUD_ERR("[RX] Since IO CONFIG RX = %d can't be done, it maybe no sound on device");
+			AUD_ERR("[RX] Since IO CONFIG RX = %d can't be done, it maybe no sound on device", idx);
 			break;
 		}
 		if(!first_boot_path && idx == 10)
