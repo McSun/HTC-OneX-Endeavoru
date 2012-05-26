@@ -361,9 +361,8 @@ int modem_off_for_uart_config(void)
 
 int modem_off_for_usb_config(struct gpio *array, size_t num)
 {
-	pr_debug(MODULE_NAME "%s 1219_01\n", __func__);
-
 	int err=0;
+	pr_debug(MODULE_NAME "%s 1219_01\n", __func__);
 	err = gpio_config_only_array(tegra_baseband_gpios_power_off_modem,
 		ARRAY_SIZE(tegra_baseband_gpios_power_off_modem));
 	if (err < 0) {
@@ -375,9 +374,8 @@ int modem_off_for_usb_config(struct gpio *array, size_t num)
 
 int modem_on_for_usb_config(struct gpio *array, size_t num)
 {
-	pr_debug(MODULE_NAME "%s \n", __func__);
-
 	int err=0;
+	pr_debug(MODULE_NAME "%s \n", __func__);
 	err = gpio_config_only_array(tegra_baseband_gpios,
 		ARRAY_SIZE(tegra_baseband_gpios));
 	if (err < 0) {
@@ -902,11 +900,11 @@ EXPORT_SYMBOL_GPL(baseband_xmm_set_power_status);
 irqreturn_t baseband_xmm_power_ipc_ap_wake_irq(int irq, void *dev_id)
 {
 	int value;
+
 	struct baseband_power_platform_data *data = baseband_power_driver_data;
 
-	/* pr_debug("%s\n", __func__); */
-
 	value = gpio_get_value(data->modem.xmm.ipc_ap_wake);
+	/* pr_debug("%s\n", __func__); */
 
 	if (ipc_ap_wake_state < IPC_AP_WAKE_IRQ_READY) {
 		pr_err("%s - spurious irq\n", __func__);
@@ -994,10 +992,10 @@ irqreturn_t baseband_xmm_power_ipc_ap_wake_irq(int irq, void *dev_id)
 				
 			}
 			if (reenable_autosuspend && usbdev) {
-                               pr_info("set reenable_autosuspend false\n");
+			       struct usb_interface *intf;
                                reenable_autosuspend = false;
-                               struct usb_interface *intf;
-                               intf = usb_ifnum_to_if(usbdev, 0);
+			       intf = usb_ifnum_to_if(usbdev, 0);
+			       pr_info("set reenable_autosuspend false\n");
                                if (usb_autopm_get_interface_async(intf) >= 0) {
                                        pr_info("get_interface_async succeeded"
                                                " - call put_interface\n");
