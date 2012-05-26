@@ -2786,7 +2786,7 @@ static void usb_prepare(struct fsl_udc *udc)
  * */
 static void usb_vbus_state_work(struct work_struct *w)
 {
-	struct fsl_udc *udc = container_of(w, struct fsl_udc, check_vbus_work);
+	struct fsl_udc *udc = container_of(w, struct fsl_udc, check_vbus_work.work);
 	int _vbus;
 
 	if(!udc)
