@@ -649,14 +649,11 @@ fail:
 static void enterprise_power_off(void)
 {
 	int ret;
-#if 0
-        pr_info("enterprise: Powering off the device\n");
-        ret = tps80031_power_off();
-#else
+
         pr_info("enterprise: Powering off the device or"
                 " enter offmode charging\n");
-        tps80031_power_off_or_reboot();
-#endif
+        ret = tps80031_power_off_or_reboot();
+
 	if (ret)
 		pr_err("enterprise: failed to power off\n");
 	while(1);
