@@ -1572,11 +1572,13 @@ struct snd_soc_dai_driver aic3008_dai = {
 /*****************************************************************************/
 static int __devinit aic3008_probe(struct snd_soc_codec *codec)
 {
-	AUD_INFO("aic3008_probe() start... aic3008_codec:%p", codec);
 	int ret = 0;
 
 	struct aic3008_priv *aic3008 = snd_soc_codec_get_drvdata(codec);
 	aic3008->codec = codec;
+
+	AUD_INFO("aic3008_probe() start... aic3008_codec:%p", codec);
+
 	aic3008->codec->control_data = (void *)codec_spi_dev;
 
 	if (!aic3008) {
@@ -1633,15 +1635,17 @@ static struct snd_soc_codec_driver soc_codec_dev_aic3008 __refdata = {
 /*****************************************************************************/
 static int spi_aic3008_probe(struct spi_device *spi_aic3008)
 {
-	AUD_DBG("spi device: %s, addr = 0x%p. YAY! ***** Start to Test *****\n",
-		spi_aic3008->modalias, spi_aic3008);
+
 	int ret = 0;
-	codec_spi_dev = spi_aic3008; /* assign global pointer to SPI device. */
 
 	struct aic3008_priv *aic3008 = kzalloc(sizeof(struct aic3008_priv), GFP_KERNEL);;
 	if (aic3008 == NULL)
 		return -ENOMEM;
-	
+
+	AUD_DBG("spi device: %s, addr = 0x%p. YAY! ***** Start to Test *****\n",
+		spi_aic3008->modalias, spi_aic3008);
+	codec_spi_dev = spi_aic3008; /* assign global pointer to SPI device. */	
+
 	spi_set_drvdata(spi_aic3008, aic3008);
 
 	ret = snd_soc_register_codec(&spi_aic3008->dev,
