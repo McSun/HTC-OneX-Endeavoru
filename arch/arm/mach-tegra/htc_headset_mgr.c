@@ -861,15 +861,11 @@ static int insert_1wire_work_func(void)
 {
 	int cnt = 0;
 	char b_buf[128];
+	char buf1[1];
+	char buf2[1];
 	int r,i;
 	int count = 0;
 	int mic = HEADSET_NO_MIC;
-
-	char buf2[1];
-	buf2[0]=0x00;
-
-	char buf1[1];
-	buf1[0]=0x35;
 
 	HS_LOG("insert one-wire detection start");
 
@@ -887,10 +883,14 @@ static int insert_1wire_work_func(void)
 
 	enable_1wire_tx();
 	mdelay(80);
+
+	buf1[0]=0x35;
+	buf2[0]=0x00;
+
 	fp = openFile(hi->pdata.dev_1wire,O_CREAT|O_RDWR|O_NONBLOCK,0666);
+
 	writeFile(fp,buf2,sizeof(buf2));
 	udelay(200);
-
 	writeFile(fp,buf1,sizeof(buf1));
 	udelay(200);
 
