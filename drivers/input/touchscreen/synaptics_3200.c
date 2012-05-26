@@ -1499,7 +1499,7 @@ static void synaptics_ts_finger_func(struct synaptics_ts_data *ts)
 	} else {
 		int finger_data[ts->finger_support][4];
 		int base = (ts->finger_support + 3) / 4;
-		uint8_t i, j, k;
+		uint8_t i, j;
 		uint16_t finger_press_changed = 0, finger_release_changed = 0, finger_pressed = 0;
 
 		ts->finger_count = 0;
