@@ -1352,9 +1352,11 @@ static void wlan_gpio_deinit(void){
 static int sdioDrv_probe(void)
 {
 	int rc = 0;
+	int bit;
 /*TODO	struct mmc_ios ios;*/
 	/*struct mmc_platform_data* plat = pdev->dev.platform_data;  //austin disabled for build break*/
 	struct mmc_host *mmc = 0;
+	struct mmc_ios *ios;
 
 	wlan_gpio_init();
 
@@ -1400,7 +1402,6 @@ static int sdioDrv_probe(void)
 	mmc->ops->set_ios(mmc, &ios);
 */
 
-	int bit;
 	mmc->ios.bus_width = MMC_BUS_WIDTH_1;
 	mmc->ios.power_mode = MMC_POWER_UP;
 	/* If ocr is set, we use it */
@@ -1412,7 +1413,7 @@ static int sdioDrv_probe(void)
 	mmc->ios.bus_mode = MMC_BUSMODE_OPENDRAIN;
 	mmc->ios.chip_select = MMC_CS_DONTCARE;
 	mmc->ios.timing = MMC_TIMING_LEGACY;
-	struct mmc_ios *ios;
+	
 	ios = &mmc->ios;
 	pr_info("[SD] %s: clock %uHz busmode %u powermode %u cs %u Vdd %u "
 		"width %u timing %u\n",
