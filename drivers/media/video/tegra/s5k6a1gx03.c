@@ -335,7 +335,7 @@ retry:
 	return rc;
 }
 
-static int s5k6a1gx03_check_sensorid()
+static int s5k6a1gx03_check_sensorid(void)
 {
 	uint16_t chipid = 0;
 	int32_t rc = 0;
