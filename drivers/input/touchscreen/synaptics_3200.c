@@ -2490,7 +2490,6 @@ err_init_failed:
 	if(ts->address_table != NULL)
 		kfree(ts->address_table);
 err_detect_failed:
-err_get_platform_data_fail:
 	kfree(ts);
 
 err_alloc_data_failed:
