@@ -236,31 +236,6 @@ static int32_t spi_write_table_parsepage(CODEC_SPI_CMD *cmds, int num)
  * and use kernel SPI API,
  * i.e. use single spi_write() to write spi commands to the audio codec.
  */
-static int32_t spi_write_list(CODEC_SPI_CMD *cmds, int num)
-{
-	int i;
-	int rc;
-	unsigned char buffer[2];
-
-	if (!codec_spi_dev)
-		return 0;
-
-	codec_spi_dev->bits_per_word = 16;
-	for (i = 0; i < num; i++) {
-		buffer[1] = cmds[i].reg << 1;
-		buffer[0] = cmds[i].data;
-		rc = spi_write(codec_spi_dev, buffer, sizeof(buffer));
-		if (rc < 0)
-			return rc;
-	}
-	return 0;
-}
-
-/*
- * This function arranges the address and data bytes in a large command list
- * and use kernel SPI API,
- * i.e. use single spi_write() to write spi commands to the audio codec.
- */
 static int32_t spi_read_list(CODEC_SPI_CMD *cmds, int num)
 {
 	int i;
