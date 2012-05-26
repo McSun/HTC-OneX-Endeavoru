@@ -287,13 +287,11 @@ static struct platform_driver sdhci_pltfm_driver = {
 //HTC_CSP_START
 #if defined(CONFIG_MACH_ENDEAVORU) || defined(CONFIG_MACH_ENDEAVORTD)
 struct platform_device *mmci_get_platform_device(void){
-	printk(KERN_INFO "sdhci-tegra.c  g_wlan_sdioDrv.pdev = 0x%x\n", g_wlan_sdioDrv.pdev);
 	return g_wlan_sdioDrv.pdev;
 }
 EXPORT_SYMBOL(mmci_get_platform_device);
 
 struct mmc_host *mmci_get_mmc(void){
-	printk(KERN_INFO "sdhci-tegra.c  g_wlan_sdioDrv.mmc = 0x%x\n", g_wlan_sdioDrv.mmc);
 	return g_wlan_sdioDrv.mmc;
 }
 EXPORT_SYMBOL(mmci_get_mmc);
