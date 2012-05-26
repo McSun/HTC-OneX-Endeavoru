@@ -2590,7 +2590,7 @@ static int synaptics_ts_suspend(struct i2c_client *client, pm_message_t mesg)
 	if (ret < 0)
 		i2c_syn_error_handler(ts, 0, "r:0", __func__);
 
-	data = data & (0x1<<7);
+	data = data & (0x1<<7 - 1);
 
 	ret = i2c_syn_write_byte_data(client,
 			get_address_base(ts, 0x11, CONTROL_BASE) + 41, data);
