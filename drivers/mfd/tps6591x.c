@@ -352,7 +352,7 @@ static int set_RTC_alarm_for_power_off_test(struct device *dev)
 	set_fs(old_fs);
 
 	if(value_int == 0)
-		return;
+		return value_int;
 	value_int /= 1000;
 	
 	rtc_read_time(extern_alarm_rtc_dev, &rtc_current_rtc_time);
