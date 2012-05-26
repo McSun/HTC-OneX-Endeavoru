@@ -428,8 +428,7 @@ static void report_p_input(int nowstatus)
 
 static void report_debounce_do_work(struct work_struct *w)
 {
-	struct ps_debounce_struct *ps_debounce = container_of(w,
-				struct ps_debounce_struct, report_debounce_work);
+	struct ps_debounce_struct *ps_debounce = container_of(w, struct ps_debounce_struct, report_debounce_work.work);
 	int nowstatus = ps_debounce->status_val;
 	report_p_input(nowstatus);
 }
