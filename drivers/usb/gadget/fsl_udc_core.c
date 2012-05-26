@@ -1120,7 +1120,7 @@ err_unmap:
 static int fsl_ep_dequeue(struct usb_ep *_ep, struct usb_request *_req)
 {
 	struct fsl_ep *ep = container_of(_ep, struct fsl_ep, ep);
-	struct fsl_req *req;
+	struct fsl_req *req = container_of(_req, struct fsl_req, req);
 	unsigned long flags;
 	int ep_num, stopped, ret = 0;
 	u32 epctrl;
