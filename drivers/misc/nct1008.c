@@ -946,7 +946,7 @@ int nct1008_thermal_set_limits(struct nct1008_data *data,
 		data->current_hi_limit = hi_limit;
 	}
 
-	printk(KERN_INFO "[TMS] set hi_limit=%d, lo_limit=%d", hi_limit, lo_limit);
+	printk(KERN_INFO "[TMS] set hi_limit=%ld, lo_limit=%ld", hi_limit, lo_limit);
 
 	return 0;
 }
