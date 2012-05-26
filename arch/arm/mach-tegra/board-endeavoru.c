@@ -2091,28 +2091,6 @@ static void gpio_o_l(int gpio, char* name)
 	gpio_export(gpio, true);
 }
 
-
-static void modem_not_init(void)
-{
-	pr_info("%s: disable gpio\n", __func__);
-
-	gpio_o_l(TEGRA_GPIO_PM4, "TEGRA_GPIO_PM4");
-	gpio_o_l(TEGRA_GPIO_PC1, "TEGRA_GPIO_PC1");
-	gpio_o_l(TEGRA_GPIO_PN0, "TEGRA_GPIO_PN0");
-	gpio_o_l(TEGRA_GPIO_PN3, "TEGRA_GPIO_PN3");
-	gpio_o_l(TEGRA_GPIO_PC6, "TEGRA_GPIO_PC6");
-	gpio_o_l(TEGRA_GPIO_PJ0, "TEGRA_GPIO_PJ0");
-	gpio_o_l(TEGRA_GPIO_PV0, "TEGRA_GPIO_PV0");
-	gpio_o_l(TEGRA_GPIO_PN1, "TEGRA_GPIO_PN1");
-	gpio_o_l(TEGRA_GPIO_PN2, "TEGRA_GPIO_PN2");
-	gpio_o_l(TEGRA_GPIO_PJ7, "TEGRA_GPIO_PJ7");
-	gpio_o_l(TEGRA_GPIO_PK7, "TEGRA_GPIO_PK7");
-	gpio_o_l(TEGRA_GPIO_PB0, "TEGRA_GPIO_PB0");
-	gpio_o_l(TEGRA_GPIO_PB1, "TEGRA_GPIO_PB1");
-
-}
-
-
 static void enterprise_baseband_init(void)
 {
 //	modem_not_init();
