@@ -1008,7 +1008,6 @@ static int __devinit nct1008_probe(struct i2c_client *client,
 {
 	struct nct1008_data *data;
 	int err;
-	unsigned int delay;
 
 	data = kzalloc(sizeof(struct nct1008_data), GFP_KERNEL);
 	if (!data)
