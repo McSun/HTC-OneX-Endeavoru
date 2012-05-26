@@ -1852,6 +1852,7 @@ static void sdhci_timeout_timer(unsigned long data)
 
 static void sdhci_cmd_irq(struct sdhci_host *host, u32 intmask)
 {
+
 	int opcode;
 	BUG_ON(intmask == 0);
 
@@ -1956,7 +1957,13 @@ static void sdhci_show_adma_error(struct sdhci_host *host) { }
 
 static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
 {
+
+	int opcode;
+	int argument;
 	BUG_ON(intmask == 0);
+
+	opcode = host->cmd->opcode;
+	argument = SDHCI_ARGUMENT;
 
 	/* CMD19 generates _only_ Buffer Read Ready interrupt */
 	if (intmask & SDHCI_INT_DATA_AVAIL) {
@@ -1989,8 +1996,6 @@ static void sdhci_data_irq(struct sdhci_host *host, u32 intmask)
 		return;
 	}
 
-	u32 opcode;
-	u32 argument;
 	if (host->data->mrq) {
 		if (host->data->mrq->cmd) {
 			opcode = host->data->mrq->cmd->opcode;
