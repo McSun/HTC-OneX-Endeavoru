@@ -44,6 +44,28 @@
 
 #include "workqueue_sched.h"
 
+#define WQ_NAME			"events"
+#define WQ_HIST_LEN			(20)
+
+
+static int wq_pos = 0;
+static unsigned long wq_hist[WQ_HIST_LEN];
+int print_workqueue(void)
+{
+	char func_sym[KSYM_SYMBOL_LEN];
+	int i = wq_pos, count = 0;
+
+	do {
+		sprint_symbol(func_sym, wq_hist[i]);
+		printk(KERN_INFO "[wq_list] %s[%d]: %s\n", WQ_NAME, count--, func_sym);
+
+		if (--i < 0)
+			i = WQ_HIST_LEN - 1;
+	} while (wq_pos != i);
+
+	return 0;
+}
+
 enum {
 	/* global_cwq flags */
 	GCWQ_MANAGE_WORKERS	= 1 << 0,	/* need to manage workers */
@@ -252,11 +274,13 @@ struct workqueue_struct *system_long_wq __read_mostly;
 struct workqueue_struct *system_nrt_wq __read_mostly;
 struct workqueue_struct *system_unbound_wq __read_mostly;
 struct workqueue_struct *system_freezable_wq __read_mostly;
+struct workqueue_struct *system_nrt_freezable_wq __read_mostly;
 EXPORT_SYMBOL_GPL(system_wq);
 EXPORT_SYMBOL_GPL(system_long_wq);
 EXPORT_SYMBOL_GPL(system_nrt_wq);
 EXPORT_SYMBOL_GPL(system_unbound_wq);
 EXPORT_SYMBOL_GPL(system_freezable_wq);
+EXPORT_SYMBOL_GPL(system_nrt_freezable_wq);
 
 #define CREATE_TRACE_POINTS
 #include <trace/events/workqueue.h>
@@ -2464,19 +2488,6 @@ bool flush_work(struct work_struct *work)
 }
 EXPORT_SYMBOL_GPL(flush_work);
 
-bool flush_work_timeout(struct work_struct *work, unsigned long timeout)
-{
-        struct wq_barrier barr;
-
-        if (start_flush_work(work, &barr, true)) {
-                wait_for_completion_timeout(&barr.done, timeout);
-                destroy_work_on_stack(&barr.work);
-                return true;
-        } else
-                return false;
-}
-EXPORT_SYMBOL_GPL(flush_work_timeout);
-
 static bool wait_on_cpu_work(struct global_cwq *gcwq, struct work_struct *work)
 {
 	struct wq_barrier barr;
@@ -2879,9 +2890,7 @@ static int alloc_cwqs(struct workqueue_struct *wq)
 		}
 	}
 
-	/* just in case, make sure it's actually aligned
-	 * - this is affected by PERCPU() alignment in vmlinux.lds.S
-	 */
+	/* just in case, make sure it's actually aligned */
 	BUG_ON(!IS_ALIGNED(wq->cpu_wq.v, align));
 	return wq->cpu_wq.v ? 0 : -ENOMEM;
 }
@@ -3041,8 +3050,13 @@ reflush:
 
 	for_each_cwq_cpu(cpu, wq) {
 		struct cpu_workqueue_struct *cwq = get_cwq(cpu, wq);
+		bool drained;
 
-		if (!cwq->nr_active && list_empty(&cwq->delayed_works))
+		spin_lock_irq(&cwq->gcwq->lock);
+		drained = !cwq->nr_active && list_empty(&cwq->delayed_works);
+		spin_unlock_irq(&cwq->gcwq->lock);
+
+		if (drained)
 			continue;
 
 		if (++flush_cnt == 10 ||
@@ -3806,8 +3820,12 @@ static int __init init_workqueues(void)
 					    WQ_UNBOUND_MAX_ACTIVE);
 	system_freezable_wq = alloc_workqueue("events_freezable",
 					      WQ_FREEZABLE, 0);
+	system_nrt_freezable_wq = alloc_workqueue("events_nrt_freezable",
+			WQ_NON_REENTRANT | WQ_FREEZABLE, 0);
 	BUG_ON(!system_wq || !system_long_wq || !system_nrt_wq ||
-	       !system_unbound_wq || !system_freezable_wq);
+	       !system_unbound_wq || !system_freezable_wq ||
+		!system_nrt_freezable_wq);
 	return 0;
 }
 early_initcall(init_workqueues);
+
