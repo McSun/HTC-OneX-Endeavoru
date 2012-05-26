@@ -3025,8 +3025,9 @@ static DEVICE_ATTR(tps_vbus, 0444, show_tps_vbus, NULL);
 
 static ssize_t show_charger(struct device *dev, struct device_attribute *attr, char *buf)
 {
-	USB_INFO("show_charger\n");
 	unsigned length;
+	USB_INFO("show_charger\n");
+
 	if(udc_controller->connect_type == CONNECT_TYPE_USB || udc_controller->connect_type == CONNECT_TYPE_UNKNOWN){
 		length = sprintf(buf, "%d\n", 1);
 	}
