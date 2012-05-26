@@ -859,7 +859,6 @@ static void remove_detect_work_func(struct work_struct *work)
 /*insert one-wire work function. send start comment and initail comment and then recieve AID form accessory.*/
 static int insert_1wire_work_func(void)
 {
-	HS_LOG("insert one-wire detection start");
 	int cnt = 0;
 	char b_buf[128];
 	int r,i;
@@ -871,6 +870,8 @@ static int insert_1wire_work_func(void)
 
 	char buf1[1];
 	buf1[0]=0x35;
+
+	HS_LOG("insert one-wire detection start");
 
 	if (uart_check == 0)
 		while (1){
