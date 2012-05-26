@@ -1852,8 +1852,8 @@ static void sdhci_timeout_timer(unsigned long data)
 
 static void sdhci_cmd_irq(struct sdhci_host *host, u32 intmask)
 {
-	BUG_ON(intmask == 0);
 	int opcode;
+	BUG_ON(intmask == 0);
 
 	if (!host->cmd) {
 		printk(KERN_ERR "%s: Got command interrupt 0x%08x even "
