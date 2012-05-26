@@ -607,12 +607,6 @@ static CODEC_SPI_CMD **init_2d_array(int row_sz, int col_sz)
 	return table_ptr;
 }
 
-static void spi_aic3008_allow_sleep(void)
-{
-	wake_unlock(&codec_clk.idlelock);
-	wake_unlock(&codec_clk.wakelock);
-}
-
 static int aic3008_config_ex(CODEC_SPI_CMD *cmds, int size)
 {
 	int i = 0;
