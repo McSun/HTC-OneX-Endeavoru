@@ -322,7 +322,6 @@ static int set_RTC_alarm_for_power_off_test(struct device *dev)
 	//RTC var
 	struct rtc_time     rtc_current_rtc_time;
 	unsigned long       rtc_current_time;
-	struct timespec     wall_time;
 	struct rtc_wkalrm   rtc_alarm;
 	unsigned long       rtc_alarm_time;
 
