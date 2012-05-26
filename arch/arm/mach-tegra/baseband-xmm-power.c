@@ -1421,7 +1421,7 @@ static int baseband_xmm_power_driver_probe(struct platform_device *device)
 	int err, ret=0;
 
 	 pr_info(MODULE_NAME"%s 0316 hr_sleep and jiffe - CPU Freq. \n", __func__);
-	 pr_info(MODULE_NAME"enum_delay_ms=%d\n", enum_delay_ms);
+	 pr_info(MODULE_NAME"enum_delay_ms=0x%08lx\n", enum_delay_ms);
 	 htcpcbid=htc_get_pcbid_info();
 	 pr_info(MODULE_NAME"htcpcbid=%d\n", htcpcbid);
 
