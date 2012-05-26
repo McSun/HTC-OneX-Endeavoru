@@ -2072,25 +2072,6 @@ static void enterprise_modem_init(void)
 //	}
 }
 
-static void gpio_o_l(int gpio, char* name)
-{
-	int ret = gpio_request(gpio, name);
-	if (ret < 0)
-	{
-		pr_err("[KW] %s: gpio_request failed for gpio %s\n",
-			__func__, name);
-		//return;
-	}
-	ret = gpio_direction_output(gpio, 0);
-	if (ret < 0) {
-		pr_err("[KW] %s: gpio_direction_output failed %d\n", __func__, ret);
-		gpio_free(gpio);
-		return;
-	}
-	tegra_gpio_enable(gpio);
-	gpio_export(gpio, true);
-}
-
 static void enterprise_baseband_init(void)
 {
 //	modem_not_init();
