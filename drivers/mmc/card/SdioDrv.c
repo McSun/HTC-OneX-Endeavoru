@@ -1510,6 +1510,8 @@ static int sdioDrv_remove(void)
 void sdioDrv_set_clock_rate(int clock_rate)
 {
 	struct mmc_host *mmc  = mmci_get_mmc();
+
+	struct mmc_ios *ios;
 /*TODO	struct mmc_ios ios;
 
 	memset(&ios, 0, sizeof(struct mmc_ios));
@@ -1543,7 +1545,7 @@ void sdioDrv_set_clock_rate(int clock_rate)
 
 	mmc->ios.vdd = 21;
 	mmc->ios.timing = MMC_TIMING_LEGACY;
-	struct mmc_ios *ios;
+	
 	ios = &mmc->ios;
 	pr_info("[SD] %s: clock %uHz busmode %u powermode %u cs %u Vdd %u "
 		"width %u timing %u\n",
