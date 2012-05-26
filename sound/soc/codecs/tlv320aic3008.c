@@ -1533,7 +1533,6 @@ static int aic3008_dai_startup(struct snd_pcm_substream *substream,
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_codec *codec = rtd->codec;
 	struct aic3008_priv *aic3008 = snd_soc_codec_get_drvdata(codec);
-	struct spi_device *spi = codec->control_data;
 	struct snd_pcm_runtime *master_runtime;
 
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
