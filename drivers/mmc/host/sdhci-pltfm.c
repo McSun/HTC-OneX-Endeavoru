@@ -69,6 +69,11 @@ static struct sdhci_ops sdhci_pltfm_ops = {
 
 static int __devinit sdhci_pltfm_probe(struct platform_device *pdev)
 {
+//HTC_CSP_START
+#if defined(CONFIG_MACH_ENDEAVORU) || defined(CONFIG_MACH_ENDEAVORTD)
+    int addr = 0;
+#endif
+//HTC_CSP_END
 	const struct platform_device_id *platid = platform_get_device_id(pdev);
 	struct sdhci_pltfm_data *pdata;
 	struct sdhci_host *host;
@@ -89,7 +94,6 @@ static int __devinit sdhci_pltfm_probe(struct platform_device *pdev)
 
 //HTC_CSP_START
 #if defined(CONFIG_MACH_ENDEAVORU) || defined(CONFIG_MACH_ENDEAVORTD)
-    int addr = 0;
     addr = iomem->start;
     //printk(KERN_INFO "start addr = 0x%x\n", addr);
 #endif
