@@ -92,8 +92,6 @@ struct aic3008_clk_state {
 	struct wake_lock wakelock;
 };
 
-static struct aic3008_clk_state codec_clk;
-
 static const struct snd_kcontrol_new aic3008_snd_controls[] = { };
 static const struct snd_soc_dapm_widget aic3008_dapm_widgets[] = { };
 static const struct snd_soc_dapm_route intercon[] = { };
