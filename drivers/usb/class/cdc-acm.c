@@ -316,8 +316,6 @@ static void acm_write_done(struct acm *acm, struct acm_wb *wb)
 {
 	wb->use = 0;
 	acm->transmitting--;
-	if (verbose) ("[ref] - %s(%d) %d\n", __func__, __LINE__, --autopm_refcnt);
-	reflog("[ref] - %s(%d) %d\n", __func__, __LINE__, --autopm_refcnt);
 	usb_autopm_put_interface_async(acm->control);
 }
 
