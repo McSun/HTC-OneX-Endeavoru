@@ -700,7 +700,7 @@ int sdioDrv_SyncReadMethod(char *out_data_buffer,
 	/*unsigned long extra_size;
 	unsigned int transferSize;
 	SDIO_Status status;
-	unsigned int incr_fix=1;/*INCREMENT_REG_ADDR; //address will be inc by HW automatically*/
+	unsigned int incr_fix=1;INCREMENT_REG_ADDR; //address will be inc by HW automatically*/
 #if 0/*USE_SIGNAL_READ_WRITE*/
 /*use cmd 52*/
 	unsigned long bytes_count;
