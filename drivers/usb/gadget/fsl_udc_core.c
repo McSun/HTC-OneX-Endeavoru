@@ -2822,11 +2822,11 @@ void tegra_usb_set_vbus_state(int online)
 {
 	unsigned long flags = 0;
 	struct fsl_udc *udc = udc_controller;
+	int count = 0;
 	VDBG("VBUS %s", online ? "on" : "off");
 	USB_INFO("tegra_usb_set_vbus_state %s \n", online ? "on" : "off");
 	wake_lock_timeout(&udc_wake_lock2, 1*HZ);
 	usb_check_count--;
-        int count = 0;
 
 	if (udc && udc->transceiver) {
 		if (udc->vbus_active && !online) {
