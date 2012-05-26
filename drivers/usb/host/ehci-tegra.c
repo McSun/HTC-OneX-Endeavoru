@@ -110,8 +110,6 @@ void usb_register_dump(void)
 	struct usb_hcd  *hcd;
 	struct ehci_hcd *ehci;
 	int i = 0;
-	void __iomem *apb_misc = IO_ADDRESS(TEGRA_APB_MISC_BASE);
-	u32 val;
 
 	if(s_hsic_hcd) {
 		hcd = s_hsic_hcd;
