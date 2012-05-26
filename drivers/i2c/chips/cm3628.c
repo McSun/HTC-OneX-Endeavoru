@@ -755,16 +755,6 @@ static irqreturn_t cm3628_irq_handler(int irq, void *data)
 	return IRQ_HANDLED;
 }
 
-static int als_power(int enable)
-{
-	struct cm3628_info *lpi = lp_info;
-
-	if (lpi->power)
-		lpi->power(LS_PWR_ON, 1);
-
-	return 0;
-}
-
 static void ls_initial_cmd(struct cm3628_info *lpi)
 {
 	char cmd = 0;
