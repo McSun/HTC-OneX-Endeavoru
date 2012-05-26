@@ -379,11 +379,15 @@ static void radio_detect_work_handler(struct work_struct *work)
 {
 		int radiopower=0;
 
-		pr_info("Enter radio_detect_work_handler\n");
+	char message[20] = "RADIO=";
+	char *envp[] = { message, NULL };
+	int status = gpio_get_value(CORE_DUMP_DETECT);
 
 		/* Sleep 30 ms and then check if radio is turn off */
 		msleep(30);
 		radiopower =gpio_get_value(TEGRA_GPIO_PM4);
+
+	pr_info("Enter radio_detect_work_handler\n");
 
 		if (!radiopower) {
 			pr_info("radio is off, it's not coredump interrupt\n");
@@ -395,10 +399,6 @@ static void radio_detect_work_handler(struct work_struct *work)
 			pr_info("baseband_power2_driver_data is null\n");
 			return ;
     }
-
-	char message[20] = "RADIO=";
-	char *envp[] = { message, NULL };
-	int status = gpio_get_value(CORE_DUMP_DETECT);
 
 	pr_info("CORE_DUMP_DETECT = %d\n", status);
 		if (status) {
@@ -875,6 +875,8 @@ static int baseband_xmm_power2_driver_probe(struct platform_device *device)
 			device->dev.platform_data;
 
 	int err=0;
+	int err_radio;
+
 	pr_debug("%s 0309 - CPU Freq with data protect.\n", __func__);
 
 	if (data == NULL) {
@@ -966,13 +968,13 @@ static int baseband_xmm_power2_driver_probe(struct platform_device *device)
 #endif//sim move to other driver
 
 		/* radio detect*/
-		radio_detect_status = RADIO_STATUS_UNKNOWN;
-		int err_radio;
 		err_radio = request_irq(gpio_to_irq(CORE_DUMP_DETECT),
 			radio_det_irq,
 			/*IRQF_TRIGGER_RISING |*/ IRQF_TRIGGER_FALLING,
 			"RADIO_DETECT",
 			&modem_info);
+
+		radio_detect_status = RADIO_STATUS_UNKNOWN;
 
 		if (err_radio < 0) {
 			pr_err("%s - request irq RADIO_DETECT failed\n",
