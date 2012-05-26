@@ -1582,7 +1582,7 @@ static int __devinit aic3008_probe(struct snd_soc_codec *codec)
 	aic3008->codec->control_data = (void *)codec_spi_dev;
 
 	if (!aic3008) {
-		AUD_ERR("%s: Codec not registered, SPI device not yet probed\n",
+		AUD_ERR("%p: Codec not registered, SPI device not yet probed\n",
 				&aic3008->codec->name);
 		return -ENODEV;
 	}
