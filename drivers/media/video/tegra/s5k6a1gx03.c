@@ -628,8 +628,8 @@ static long s5k6a1gx03_ioctl(struct file *file,
 		return 0;
 	case S5K6A1G_IOCTL_SET_MODE:
 	{
-		pr_info("[CAM] %s::S5K6A1G_IOCTL_SET_MODE",__FUNCTION__);
 		struct s5k6a1gx03_mode mode;
+		pr_info("[CAM] %s::S5K6A1G_IOCTL_SET_MODE",__FUNCTION__);
 		if (copy_from_user(&mode,
 				   (const void __user *)arg,
 				   sizeof(struct s5k6a1gx03_mode))) {
