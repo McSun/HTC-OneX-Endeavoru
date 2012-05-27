@@ -2174,7 +2174,6 @@ err_out:
 static int acm_reset_resume(struct usb_interface *intf)
 {
 	struct acm *acm = usb_get_intfdata(intf);
-	struct tty_struct *tty = NULL;
 
 	printk(KERN_INFO"%s acm->port.count=%d\n",__func__,acm->port.count);
 	pr_info(MODULE_NAME "%s - don't hangup ttyacm\n", __func__);
