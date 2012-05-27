@@ -89,7 +89,6 @@ static int polling = 1;
 
 struct nct1008_data *get_pwr_data(void)
 {
-	if (pwr_data != NULL)
 		return pwr_data;
 }
 
