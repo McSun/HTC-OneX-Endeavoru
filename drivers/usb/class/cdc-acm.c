@@ -630,12 +630,6 @@ static void acm_rx_tasklet(unsigned long _acm)
 	unsigned char throttled;
 	int copied;
 
-	int gsize = buf->size;
-	char *gdata_buf = buf->base;
-	int gi=0;
-	int grc = 0;
-	gsize = gsize > 16 ? 16 : gsize;
-
 	if (verbose) pr_info("%s: acm %p\n", __func__, acm);
 
 	if (!ACM_READY(acm)) {
@@ -747,7 +741,11 @@ next_buffer:
 	
 	/*Buffer latest Rx for debug*/
 	if(buf->size>0&&(acm->minor==0)){
-
+	int gsize = buf->size;
+	char *gdata_buf = buf->base;
+	int gi=0;
+	gsize = gsize > 16 ? 16 : gsize;
+	int grc = 0;
 	for (gi = 0; gi < gsize; gi++)
 		grc += sprintf(gpr_buf + grc, "%02x ", gdata_buf[gi]);
 	gpr_buf[grc] = '\0';
@@ -1034,11 +1032,10 @@ static int acm_tty_chars_in_buffer(struct tty_struct *tty);
 
 static void acm_port_down(struct acm *acm)
 {
-	int i, nr = acm->rx_buflimit;
 #if 1 //HTC_CSP_START
 	printk(MODULE_NAME":%s ttyACM%d +\n",__FUNCTION__,acm->minor);
 #endif //HTC_CSP_END
-
+	int i, nr = acm->rx_buflimit;
 	//mutex_lock(&open_mutex);
 	if (acm->dev) {
 		reflog("[ref] + %s(%d) %d\n", __func__, __LINE__, ++autopm_refcnt);
@@ -1141,15 +1138,10 @@ static int acm_tty_write(struct tty_struct *tty,
 					const unsigned char *buf, int count)
 {
 	struct acm *acm = tty->driver_data;
-	struct acm_wb *wb;
-
 	int stat;
 	unsigned long flags;
 	int wbn;
-
-		int i = 0, size = count, rc = 0;
-		char *data_buf = buf;
-		char pr_buf[512];
+	struct acm_wb *wb;
 
 	if (verbose) pr_info("%s: buf %p count %d\n", __func__, buf, count);
 
@@ -1187,6 +1179,10 @@ static int acm_tty_write(struct tty_struct *tty,
 		pcount=0;
 		}
 		
+				
+		int i = 0, size = count, rc = 0;
+		char *data_buf = buf;
+		char pr_buf[512];
 #if 0
 		size = size > 16 ? 16 : size;
 		for (i=0; i < size; i++) {
