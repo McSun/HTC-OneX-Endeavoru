@@ -325,7 +325,7 @@ static void acm_write_done(struct acm *acm, struct acm_wb *wb)
  * the caller is responsible for locking
  */
 
-static int acm_start_wb(struct acm *acm, struct acm_wb *wb, char *func_name)
+static int acm_start_wb(struct acm *acm, struct acm_wb *wb, const char *func_name)
 {
 	int rc;
 
