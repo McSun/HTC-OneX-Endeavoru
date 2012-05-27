@@ -91,8 +91,6 @@ static int ad5823_write(struct i2c_client *client, u8 addr, u32 value)
 
 static int ad5823_set_position(struct ad5823_info *info, u32 position)
 {
-	u8 msb = 0;
-
 	if (position < info->config.pos_low ||
 	    position > info->config.pos_high)
 		return -EINVAL;
