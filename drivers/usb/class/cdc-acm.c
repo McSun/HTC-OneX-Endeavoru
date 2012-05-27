@@ -147,7 +147,7 @@ static int max_intfs = 2;
 unsigned static int txbyte=0,rxbyte=0;
 char gpr_buf[512];
 static int pcount=0;
-static int debugtestcoung=0; 
+
 module_param(max_intfs, int, 0644);
 MODULE_PARM_DESC(max_intfs, "usb class (cdc-acm) - Number of TTYACMs");
 
