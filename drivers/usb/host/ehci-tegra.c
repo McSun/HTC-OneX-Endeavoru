@@ -830,9 +830,10 @@ static int tegra_ehci_setup(struct usb_hcd *hcd)
 #ifdef CONFIG_PM
 static int tegra_ehci_bus_suspend(struct usb_hcd *hcd)
 {
-        printk(KERN_INFO"%s\n", __func__);
 	struct tegra_ehci_hcd *tegra = dev_get_drvdata(hcd->self.controller);
 	int error_status = 0;
+
+	printk(KERN_INFO"%s\n", __func__);
 
 	mutex_lock(&tegra->tegra_ehci_hcd_mutex);
 	tegra_ehci_disable_phy_interrupt(hcd);
@@ -858,9 +859,10 @@ static int tegra_ehci_bus_suspend(struct usb_hcd *hcd)
 
 static int tegra_ehci_bus_resume(struct usb_hcd *hcd)
 {
-	printk(KERN_INFO"%s\n", __func__);
 	struct tegra_ehci_hcd *tegra = dev_get_drvdata(hcd->self.controller);
 	int ehci_bus_resumed;
+
+	printk(KERN_INFO"%s\n", __func__);
 
 	mutex_lock(&tegra->tegra_ehci_hcd_mutex);
 	if (tegra->bus_suspended && tegra->power_down_on_bus_suspend) {
@@ -1276,9 +1278,10 @@ fail_hcd:
 #ifdef CONFIG_PM
 static int tegra_ehci_resume(struct platform_device *pdev)
 {
-	printk(KERN_INFO"%s\n", __func__);
 	struct tegra_ehci_hcd *tegra = platform_get_drvdata(pdev);
 	struct usb_hcd *hcd = ehci_to_hcd(tegra->ehci);
+
+	printk(KERN_INFO"%s\n", __func__);
 
 	if ((tegra->bus_suspended) && (tegra->power_down_on_bus_suspend)) {
 
@@ -1297,12 +1300,14 @@ static int tegra_ehci_resume(struct platform_device *pdev)
 
 static int tegra_ehci_suspend(struct platform_device *pdev, pm_message_t state)
 {
-	printk(KERN_INFO"%s\n", __func__);
+
+	int ret;
+	u32 val;
 
 	struct tegra_ehci_hcd *tegra = platform_get_drvdata(pdev);
 	struct usb_hcd *hcd = ehci_to_hcd(tegra->ehci);
-	int ret;
-	u32 val;
+
+	printk(KERN_INFO"%s\n", __func__);
 
 	pr_info(MODULE_NAME "%s\n", __func__); /* HTC */
 
