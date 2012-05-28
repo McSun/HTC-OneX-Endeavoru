@@ -155,13 +155,8 @@ static struct elevator_type *elevator_get(const char *name)
 
 	e = elevator_find(name);
 	if (!e) {
-		char elv[ELV_NAME_MAX + strlen("-iosched")];
-
 		spin_unlock(&elv_list_lock);
-
-		snprintf(elv, sizeof(elv), "%s-iosched", name);
-
-		request_module("%s", elv);
+		request_module("%s-iosched", name);
 		spin_lock(&elv_list_lock);
 		e = elevator_find(name);
 	}
@@ -418,8 +413,6 @@ void elv_dispatch_sort(struct request_queue *q, struct request *rq)
 	struct list_head *entry;
 	int stop_flags;
 
-	BUG_ON(rq->cmd_flags & REQ_ON_PLUG);
-
 	if (q->last_merge == rq)
 		q->last_merge = NULL;
 
@@ -428,16 +421,7 @@ void elv_dispatch_sort(struct request_queue *q, struct request *rq)
 	q->nr_sorted--;
 
 	boundary = q->end_sector;
-
-/* Software, Studio Engineering modified. start */
-#if defined(CONFIG_ZIMMER)
-	stop_flags = REQ_SOFTBARRIER | REQ_STARTED | REQ_SWAPIN_DMPG;
-#else
 	stop_flags = REQ_SOFTBARRIER | REQ_STARTED;
-#endif
-/* Software, Studio Engineering modified. end */
-
-
 	list_for_each_prev(entry, &q->queue_head) {
 		struct request *pos = list_entry_rq(entry);
 
@@ -666,20 +650,6 @@ void __elv_add_request(struct request_queue *q, struct request *rq, int where)
 	trace_block_rq_insert(q, rq);
 
 	rq->q = q;
-
-	BUG_ON(rq->cmd_flags & REQ_ON_PLUG);
-
-/* Software, Studio Engineering added. */
-#if defined(CONFIG_ZIMMER)
-	if (rq->cmd_flags & REQ_SWAPIN_DMPG) {
-		/*
-		 * Insert swap-in or demand page requests at the front. This causes them
-		 * to be queued in the reversed order.
-		 */
-		where = ELEVATOR_INSERT_FRONT;
-	}
-	else
-#endif
 
 	if (rq->cmd_flags & REQ_SOFTBARRIER) {
 		/* barriers are scheduling boundary, update end_sector */
