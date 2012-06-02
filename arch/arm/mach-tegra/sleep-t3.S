@@ -537,11 +537,10 @@ lp1_clocks_prepare:
 	ldr	r0, [r5, #CLK_RESET_CLK_SOURCE_MSELECT]
 	orr	r0, r0, #MSELECT_CLKM
 	str	r0, [r5, #CLK_RESET_CLK_SOURCE_MSELECT]
-	ldr	r0, [r5, #CLK_RESET_CLK_SOURCE_MSELECT]
 
 	/* 2 us delay between changing sclk and disabling PLLs */
 	wait_for_us r1, r7, r9
-	add	r1, r1, #50
+	add	r1, r1, #2
 	wait_until r1, r7, r9
 
 #if 1
@@ -574,7 +573,6 @@ powerdown_pll_cx:
 	ldr	r0, [r5, #CLK_RESET_PLLX_BASE]
 	bic	r0, r0, #(1<<30)
 	str	r0, [r5, #CLK_RESET_PLLX_BASE]
-	ldr	r0, [r5, #CLK_RESET_PLLX_BASE]
 
 	mov	pc, lr
 

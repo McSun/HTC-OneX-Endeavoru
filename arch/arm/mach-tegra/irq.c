@@ -4,7 +4,7 @@
  * Author:
  *	Colin Cross <ccross@android.com>
  *
- * Copyright (C) 2010-2011, NVIDIA Corporation
+ * Copyright (C) 2010-2012, NVIDIA Corporation
  *
  * This software is licensed under the terms of the GNU General Public
  * License version 2, as published by the Free Software Foundation, and
@@ -29,6 +29,7 @@
 #include <mach/legacy_irq.h>
 
 #include "board.h"
+#include "gic.h"
 #include "pm-irq.h"
 
 #define INT_SYS_NR	(INT_GPIO_BASE - INT_PRI_BASE)
