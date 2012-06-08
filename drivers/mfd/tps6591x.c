@@ -319,11 +319,12 @@ static int set_RTC_alarm_for_power_off_test(struct device *dev)
 	mm_segment_t old_fs;
 	loff_t offset = 0;
 	char    value_str[10];
+
+	int value_int = simple_strtol(value_str, NULL, 0);
+
 	//RTC var
 	struct rtc_time     rtc_current_rtc_time;
 	unsigned long       rtc_current_time;
-	struct timespec     wall_time;
-	struct timespec     rtc_delta;
 	struct rtc_wkalrm   rtc_alarm;
 	unsigned long       rtc_alarm_time;
 
@@ -350,10 +351,8 @@ static int set_RTC_alarm_for_power_off_test(struct device *dev)
 	}
 	set_fs(old_fs);
 
-
-	int value_int = simple_strtol(value_str, NULL, 0);
 	if(value_int == 0)
-		return;
+		return value_int;
 	value_int /= 1000;
 	
 	rtc_read_time(extern_alarm_rtc_dev, &rtc_current_rtc_time);
@@ -378,6 +377,7 @@ int tps6591x_power_off(void)
 {
 	struct device *dev = NULL;
 	struct tps6591x *tps6591x;
+	int wakeup_after_value = set_RTC_alarm_for_power_off_test(dev);
 	bool usb_in_at_power_off;
 	int ret;
 	u8 tmp;
@@ -386,8 +386,7 @@ int tps6591x_power_off(void)
 		return -EINVAL;
 
 	dev = &tps6591x_i2c_client->dev;
-	int wakeup_after_value = set_RTC_alarm_for_power_off_test(dev);
-
+	
 	tps6591x = i2c_get_clientdata(tps6591x_i2c_client);
 
 	tps6591x_read(dev, TPS6591X_INT_STS3, &tmp);

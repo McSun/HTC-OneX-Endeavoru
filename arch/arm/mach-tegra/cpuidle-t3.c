@@ -171,6 +171,7 @@ static void tegra3_idle_enter_lp2_cpu_0(struct cpuidle_device *dev,
 	ktime_t exit_time;
 	bool sleep_completed = false;
 	int bin;
+	bin = time_to_bin((u32)request / 1000);
 
 	/* LP2 entry time */
 	entry_time = ktime_get();
@@ -226,7 +227,6 @@ static void tegra3_idle_enter_lp2_cpu_0(struct cpuidle_device *dev,
 	if (request > state->target_residency) {
 		s64 sleep_time = request - tegra_lp2_exit_latency;
 
-		bin = time_to_bin((u32)request / 1000);
 		idle_stats.tear_down_count[cpu_number(dev->cpu)]++;
 		idle_stats.lp2_count++;
 		idle_stats.lp2_count_bin[bin]++;

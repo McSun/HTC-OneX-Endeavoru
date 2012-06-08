@@ -161,50 +161,8 @@ static struct s5k6a1gx03_reg mode_1296x1040[] = {
 	{s5k6a1gx03_TABLE_END, 0x00},
 };
 
-static struct s5k6a1gx03_reg mode_640x480[] = {
-	//{0x0344, 0x00},//x_addr_start
-	//{0x0345, 0x00},
-	//{0x0346, 0x00},//y_addr_start
-	//{0x0347, 0x00},	
-	//{0x0348, 0x05},//x_addr_end
-	//{0x0349, 0x0F},
-	//{0x034A, 0x04},//y_addr_end
-	//{0x034B, 0x0F},
-	
-	{0x3084, 0x00},//1/2_down_scaling_mode	
-	{0x034C,0x02 },//x_output_size: 0x0280(640)
-	{0x034D,0x80 },
-	{0x034E,0x01 },//y_output_size: 0x01E0(480)
-	{0x034F,0xE0 },
-	
-	{0x0100, 0x00},// streaming off
-	{0x0103, 0x01},// sw reset
-	#if 1
-	{0x0101, 0x03}, //Vfilp + H mirror
-	#else
-	{0x0101, 0x01}, //H mirror
-	#endif
-	{0x301C, 0x35}, //APS
-	{0x3016, 0x05}, //Analog
-	{0x3034, 0x73}, //Analog
-	{0x3037, 0x01}, //Analog
-	{0x3035, 0x05}, //Analog
-	{0x301E, 0x09}, //Analog
-	{0x301B, 0xC0}, //Analog
-	{0x3013, 0x28}, //Analog
-	{0x0305, 0x04},	//PLL_P		//04
-	{0x0306, 0x00},	//PLL_M MSB	//01
-	{0x0307, 0xA0}, //PLL_M LSB	//40
-
-	{s5k6a1gx03_TABLE_WAIT_MS, 5},
-	{0x0100, 0x01}, //stream ON
-
-	{s5k6a1gx03_TABLE_END, 0x00},
-};
-
 enum {
 	s5k6a1gx03_MODE_1296x1040,
-	s5k6a1gx03_MODE_640x480,
 };
 
 static struct s5k6a1gx03_reg *mode_table[] = {
@@ -335,7 +293,7 @@ retry:
 	return rc;
 }
 
-static int s5k6a1gx03_check_sensorid()
+static int s5k6a1gx03_check_sensorid(void)
 {
 	uint16_t chipid = 0;
 	int32_t rc = 0;
@@ -628,8 +586,8 @@ static long s5k6a1gx03_ioctl(struct file *file,
 		return 0;
 	case S5K6A1G_IOCTL_SET_MODE:
 	{
-		pr_info("[CAM] %s::S5K6A1G_IOCTL_SET_MODE",__FUNCTION__);
 		struct s5k6a1gx03_mode mode;
+		pr_info("[CAM] %s::S5K6A1G_IOCTL_SET_MODE",__FUNCTION__);
 		if (copy_from_user(&mode,
 				   (const void __user *)arg,
 				   sizeof(struct s5k6a1gx03_mode))) {

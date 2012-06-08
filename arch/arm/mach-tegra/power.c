@@ -19,7 +19,6 @@ static int wakeup_delay_time_set(const char *arg, const struct kernel_param *kp)
 
 static int wakeup_delay_time_get(char *buffer, const struct kernel_param *kp)
 {
-	int ret = param_get_int(buffer, kp);
 	return param_get_int(buffer, kp);
 }
 

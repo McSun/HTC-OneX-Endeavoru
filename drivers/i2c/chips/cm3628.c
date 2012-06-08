@@ -412,8 +412,8 @@ static unsigned long last_jiffies;
 static unsigned long period_jiffies = 0.35 * HZ;
 static void report_p_input(int nowstatus)
 {
-	mutex_lock(&ps_report_input_mutex);
 	struct cm3628_info *lpi = lp_info;
+	mutex_lock(&ps_report_input_mutex);
 	
 	if(laststatus != nowstatus) {
 		D("[PS][cm3628]  %s: report proximity status : %s\n", __func__, nowstatus ? "FAR" : "NEAR");
@@ -428,8 +428,7 @@ static void report_p_input(int nowstatus)
 
 static void report_debounce_do_work(struct work_struct *w)
 {
-	struct ps_debounce_struct *ps_debounce = container_of(w,
-				struct ps_debounce_struct, report_debounce_work);
+	struct ps_debounce_struct *ps_debounce = container_of(w, struct ps_debounce_struct, report_debounce_work.work);
 	int nowstatus = ps_debounce->status_val;
 	report_p_input(nowstatus);
 }
@@ -754,16 +753,6 @@ static irqreturn_t cm3628_irq_handler(int irq, void *data)
 	queue_work(lpi->lp_wq, &sensor_irq_work);
 
 	return IRQ_HANDLED;
-}
-
-static int als_power(int enable)
-{
-	struct cm3628_info *lpi = lp_info;
-
-	if (lpi->power)
-		lpi->power(LS_PWR_ON, 1);
-
-	return 0;
 }
 
 static void ls_initial_cmd(struct cm3628_info *lpi)

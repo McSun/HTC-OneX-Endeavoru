@@ -256,9 +256,6 @@ static void tegra_dc_ext_flip_worker(struct work_struct *work)
 		win = tegra_dc_get_window(ext->dc, index);
 		ext_win = &ext->win[index];
 
-		if (!win)
-			return -EINVAL;
-
 		if (win->flags & TEGRA_WIN_FLAG_ENABLED) {
 			int j;
 			for (j = 0; j < TEGRA_DC_NUM_PLANES; j++) {

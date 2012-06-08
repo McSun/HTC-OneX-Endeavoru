@@ -361,9 +361,8 @@ int modem_off_for_uart_config(void)
 
 int modem_off_for_usb_config(struct gpio *array, size_t num)
 {
-	pr_debug(MODULE_NAME "%s 1219_01\n", __func__);
-
 	int err=0;
+	pr_debug(MODULE_NAME "%s 1219_01\n", __func__);
 	err = gpio_config_only_array(tegra_baseband_gpios_power_off_modem,
 		ARRAY_SIZE(tegra_baseband_gpios_power_off_modem));
 	if (err < 0) {
@@ -375,9 +374,8 @@ int modem_off_for_usb_config(struct gpio *array, size_t num)
 
 int modem_on_for_usb_config(struct gpio *array, size_t num)
 {
-	pr_debug(MODULE_NAME "%s \n", __func__);
-
 	int err=0;
+	pr_debug(MODULE_NAME "%s \n", __func__);
 	err = gpio_config_only_array(tegra_baseband_gpios,
 		ARRAY_SIZE(tegra_baseband_gpios));
 	if (err < 0) {
@@ -653,7 +651,7 @@ static int baseband_xmm_power_off(struct platform_device *device)
 		pr_err("%s: disable_irq_wake error\n", __func__);
 #endif
 	/* unregister usb host controller */
-	pr_info("%s: hsic device: %x\n", __func__, data->modem.xmm.hsic_device);
+	pr_info("%s: hsic device unregisterd\n", __func__);
 	if (data->hsic_unregister)
 		data->hsic_unregister(data->modem.xmm.hsic_device);
 	else
@@ -902,11 +900,11 @@ EXPORT_SYMBOL_GPL(baseband_xmm_set_power_status);
 irqreturn_t baseband_xmm_power_ipc_ap_wake_irq(int irq, void *dev_id)
 {
 	int value;
+
 	struct baseband_power_platform_data *data = baseband_power_driver_data;
 
-	/* pr_debug("%s\n", __func__); */
-
 	value = gpio_get_value(data->modem.xmm.ipc_ap_wake);
+	/* pr_debug("%s\n", __func__); */
 
 	if (ipc_ap_wake_state < IPC_AP_WAKE_IRQ_READY) {
 		pr_err("%s - spurious irq\n", __func__);
@@ -994,10 +992,10 @@ irqreturn_t baseband_xmm_power_ipc_ap_wake_irq(int irq, void *dev_id)
 				
 			}
 			if (reenable_autosuspend && usbdev) {
-                               pr_info("set reenable_autosuspend false\n");
+			       struct usb_interface *intf;
                                reenable_autosuspend = false;
-                               struct usb_interface *intf;
-                               intf = usb_ifnum_to_if(usbdev, 0);
+			       intf = usb_ifnum_to_if(usbdev, 0);
+			       pr_info("set reenable_autosuspend false\n");
                                if (usb_autopm_get_interface_async(intf) >= 0) {
                                        pr_info("get_interface_async succeeded"
                                                " - call put_interface\n");
@@ -1423,7 +1421,7 @@ static int baseband_xmm_power_driver_probe(struct platform_device *device)
 	int err, ret=0;
 
 	 pr_info(MODULE_NAME"%s 0316 hr_sleep and jiffe - CPU Freq. \n", __func__);
-	 pr_info(MODULE_NAME"enum_delay_ms=%d\n", enum_delay_ms);
+	 pr_info(MODULE_NAME"enum_delay_ms=0x%08lx\n", enum_delay_ms);
 	 htcpcbid=htc_get_pcbid_info();
 	 pr_info(MODULE_NAME"htcpcbid=%d\n", htcpcbid);
 

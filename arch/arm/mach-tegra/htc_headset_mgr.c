@@ -711,8 +711,7 @@ static void button_35mm_work_func(struct work_struct *work)
 
 	if (hi->hs_35mm_type == HEADSET_UNPLUG &&
 	    hi->h2w_35mm_type == HEADSET_UNPLUG) {
-//		kfree(works);
-		works->key_code = NULL;
+
 		HS_LOG("Ignore key event (HEADSET_UNPLUG)");
 		return;
 	}
@@ -742,9 +741,6 @@ static void button_35mm_work_func(struct work_struct *work)
 		else
 			HS_LOG("3.5mm RC: WRONG Button Release");
 	}
-
-//	kfree(works);
-	works->key_code = NULL;
 }
 
 static void debug_work_func(struct work_struct *work)
@@ -863,24 +859,21 @@ static void remove_detect_work_func(struct work_struct *work)
 /*insert one-wire work function. send start comment and initail comment and then recieve AID form accessory.*/
 static int insert_1wire_work_func(void)
 {
-	HS_LOG("insert one-wire detection start");
 	int cnt = 0;
 	char b_buf[128];
+	char buf1[1];
+	char buf2[1];
 	int r,i;
 	int count = 0;
 	int mic = HEADSET_NO_MIC;
 
-	char buf2[1];
-	buf2[0]=0x00;
-
-	char buf1[1];
-	buf1[0]=0x35;
+	HS_LOG("insert one-wire detection start");
 
 	if (uart_check == 0)
 		while (1){
-			if(hi->detect_type ==99){
+			if(hi->detect_type == 99){
 				uart_check = 1;
-				hi->detect_type == HEADSET_ADC;
+				hi->detect_type = HEADSET_ADC;
 				msleep(1000);
 				break;
 			}
@@ -890,10 +883,14 @@ static int insert_1wire_work_func(void)
 
 	enable_1wire_tx();
 	mdelay(80);
+
+	buf1[0]=0x35;
+	buf2[0]=0x00;
+
 	fp = openFile(hi->pdata.dev_1wire,O_CREAT|O_RDWR|O_NONBLOCK,0666);
+
 	writeFile(fp,buf2,sizeof(buf2));
 	udelay(200);
-
 	writeFile(fp,buf1,sizeof(buf1));
 	udelay(200);
 
@@ -905,7 +902,7 @@ static int insert_1wire_work_func(void)
 			HS_LOG("Read %xh bytes, count:%d, %s\n",r,count,b_buf);
 
 			for(cnt = 0; cnt < r; cnt++){
-				HS_LOG("Read:0x%x, %d, %s\n", (int) b_buf[cnt], (int)b_buf[cnt], b_buf[cnt]);
+				HS_LOG("Read:0x%x, %d, %s\n", (int)b_buf, (int)b_buf, b_buf);
 
 				if (hi->pdata.headset_config_1wire_num)
 					for (i = 0; i < hi->pdata.headset_config_1wire_num; i++)

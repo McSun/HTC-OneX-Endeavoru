@@ -660,22 +660,6 @@ static struct platform_device android_usb_device = {
 };
 #endif	//end of #if 0 //k30
 
-#ifdef CONFIG_USB_ANDROID_RNDIS
-static struct usb_ether_platform_data rndis_pdata = {
-	.ethaddr = {0, 0, 0, 0, 0, 0},
-	.vendorID = USB_VENDOR_ID,
-	.vendorDescr = USB_MANUFACTURER_NAME,
-};
-
-static struct platform_device rndis_device = {
-	.name   = "rndis",
-	.id     = -1,
-	.dev    = {
-		.platform_data  = &rndis_pdata,
-	},
-};
-#endif
-
 static struct tegra_i2c_platform_data enterprise_i2c1_platform_data = {
 	.adapter_nr	= 0,
 	.bus_count	= 1,
@@ -2087,47 +2071,6 @@ static void enterprise_modem_init(void)
 //		break;
 //	}
 }
-
-static void gpio_o_l(int gpio, char* name)
-{
-	int ret = gpio_request(gpio, name);
-	if (ret < 0)
-	{
-		pr_err("[KW] %s: gpio_request failed for gpio %s\n",
-			__func__, name);
-		//return;
-	}
-	ret = gpio_direction_output(gpio, 0);
-	if (ret < 0) {
-		pr_err("[KW] %s: gpio_direction_output failed %d\n", __func__, ret);
-		gpio_free(gpio);
-		return;
-	}
-	tegra_gpio_enable(gpio);
-	gpio_export(gpio, true);
-}
-
-
-static void modem_not_init(void)
-{
-	pr_info("%s: disable gpio\n", __func__);
-
-	gpio_o_l(TEGRA_GPIO_PM4, "TEGRA_GPIO_PM4");
-	gpio_o_l(TEGRA_GPIO_PC1, "TEGRA_GPIO_PC1");
-	gpio_o_l(TEGRA_GPIO_PN0, "TEGRA_GPIO_PN0");
-	gpio_o_l(TEGRA_GPIO_PN3, "TEGRA_GPIO_PN3");
-	gpio_o_l(TEGRA_GPIO_PC6, "TEGRA_GPIO_PC6");
-	gpio_o_l(TEGRA_GPIO_PJ0, "TEGRA_GPIO_PJ0");
-	gpio_o_l(TEGRA_GPIO_PV0, "TEGRA_GPIO_PV0");
-	gpio_o_l(TEGRA_GPIO_PN1, "TEGRA_GPIO_PN1");
-	gpio_o_l(TEGRA_GPIO_PN2, "TEGRA_GPIO_PN2");
-	gpio_o_l(TEGRA_GPIO_PJ7, "TEGRA_GPIO_PJ7");
-	gpio_o_l(TEGRA_GPIO_PK7, "TEGRA_GPIO_PK7");
-	gpio_o_l(TEGRA_GPIO_PB0, "TEGRA_GPIO_PB0");
-	gpio_o_l(TEGRA_GPIO_PB1, "TEGRA_GPIO_PB1");
-
-}
-
 
 static void enterprise_baseband_init(void)
 {

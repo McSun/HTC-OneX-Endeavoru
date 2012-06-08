@@ -87,7 +87,7 @@ static struct nct1008_data *pwr_data;
 static int nct1008_ready = 0;
 static int polling = 1;
 
-struct nct1008_data *get_pwr_data()
+struct nct1008_data *get_pwr_data(void)
 {
 	if (pwr_data != NULL)
 		return pwr_data;
@@ -946,7 +946,7 @@ int nct1008_thermal_set_limits(struct nct1008_data *data,
 		data->current_hi_limit = hi_limit;
 	}
 
-	printk(KERN_INFO "[TMS] set hi_limit=%d, lo_limit=%d", hi_limit, lo_limit);
+	printk(KERN_INFO "[TMS] set hi_limit=%ld, lo_limit=%ld", hi_limit, lo_limit);
 
 	return 0;
 }
@@ -1008,7 +1008,6 @@ static int __devinit nct1008_probe(struct i2c_client *client,
 {
 	struct nct1008_data *data;
 	int err;
-	unsigned int delay;
 
 	data = kzalloc(sizeof(struct nct1008_data), GFP_KERNEL);
 	if (!data)

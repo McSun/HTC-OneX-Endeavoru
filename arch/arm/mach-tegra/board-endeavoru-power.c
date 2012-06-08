@@ -649,14 +649,11 @@ fail:
 static void enterprise_power_off(void)
 {
 	int ret;
-#if 0
-        pr_info("enterprise: Powering off the device\n");
-        ret = tps80031_power_off();
-#else
+
         pr_info("enterprise: Powering off the device or"
                 " enter offmode charging\n");
-        tps80031_power_off_or_reboot();
-#endif
+        ret = tps80031_power_off_or_reboot();
+
 	if (ret)
 		pr_err("enterprise: failed to power off\n");
 	while(1);
@@ -672,6 +669,7 @@ int __init enterprise_regulator_init(void)
 	void __iomem *pmc = IO_ADDRESS(TEGRA_PMC_BASE);
 	u32 pmc_ctrl;
 	u32 pmc_dpd_pads;
+	int projectPhase = htc_get_pcbid_info();
 
 	/* configure the power management controller to trigger PMU
 	 * interrupts when low */
@@ -683,8 +681,6 @@ int __init enterprise_regulator_init(void)
 	writel(pmc_dpd_pads & ~PMC_DPD_PADS_ORIDE_BLINK , pmc + PMC_DPD_PADS_ORIDE);
 
 	endeavor_gpio_rtc_init();
-
-	int projectPhase = htc_get_pcbid_info();
 
 	if (projectPhase == PROJECT_PHASE_XD){
 		tps_platform.num_subdevs = ARRAY_SIZE(tps80031_devs_xd);

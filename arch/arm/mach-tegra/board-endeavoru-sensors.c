@@ -1418,14 +1418,16 @@ static int __init enterprise_ina230_init(void)
 
 int __init enterprise_sensors_init(void)
 {
-	psensor_init();
-	
 	int ret;
+	psensor_init();
+
+	enterprise_comp_irq_init();
+
 	if (htc_get_pcbid_info() == PROJECT_PHASE_XA){
 		pr_info("[GYRO]Use Invensense solution");
 		enterprise_mpuirq_init();
 	}
-	enterprise_comp_irq_init();
+
 	//enterprise_srio_1v8_en();
 	enterprise_gsensor_irq_init(); 
 	if (htc_get_pcbid_info() != PROJECT_PHASE_XA ){

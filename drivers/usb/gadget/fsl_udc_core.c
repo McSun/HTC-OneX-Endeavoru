@@ -90,7 +90,6 @@
 
 #define VUBS_IRQ -22
 #define VBUS_WAKEUP_ENR 19
-extern int global_wakeup_state;
 
 static int irq_udc_debug;
 int irq_otg_debug;
@@ -1467,26 +1466,7 @@ static int fsl_vbus_draw(struct usb_gadget *gadget, unsigned mA)
 		return otg_set_power(udc->transceiver, mA);
 	return -ENOTSUPP;
 }
-//++ htc ++
-//SW workarounds
-static int fsl_pullup_internal(struct usb_gadget *gadget, int is_on)
-{
-	struct fsl_udc *udc;
 
-	udc = container_of(gadget, struct fsl_udc, gadget);
-	udc->softconnect = (is_on != 0);
-	if (can_pullup(udc))
-		fsl_writel((fsl_readl(&dr_regs->usbcmd) | USB_CMD_RUN_STOP),
-				&dr_regs->usbcmd);
-	else {
-		fsl_writel((fsl_readl(&dr_regs->usbcmd) & ~USB_CMD_RUN_STOP),
-				&dr_regs->usbcmd);
-		/* S/W workaround, Issue#1 */
-		//TODO:otg_io_write(udc->transceiver, 0x48, 0x04);
-	}
-	return 0;
-}
-//-- htc --
 /* Change Data+ pullup status
  * this func is used by usb_gadget_connect/disconnet
  */
@@ -1670,7 +1650,6 @@ static void udc_test_mode(struct fsl_udc *udc, u32 test_mode)
 	struct fsl_ep *ep;
 	u32 portsc, bitmask;
 	unsigned long timeout;
-	u32 val;
 
 	/* Ack the ep0 IN */
 	if (ep0_prime_status(udc, EP_DIR_IN))
@@ -1686,7 +1665,7 @@ static void udc_test_mode(struct fsl_udc *udc, u32 test_mode)
 	/* Wait until ep0 IN endpoint txfr is complete */
 	while (!(fsl_readl(&dr_regs->endptcomplete) & bitmask)) {
 		if (time_after(jiffies, timeout)) {
-			USB_ERR("Timeout for Ep0 IN Ack\n");
+			pr_err("Timeout for Ep0 IN Ack\n");
 			break;
 		}
 		cpu_relax();
@@ -1700,10 +1679,6 @@ static void udc_test_mode(struct fsl_udc *udc, u32 test_mode)
 		VDBG("TEST_K\n");
 		break;
 	case PORTSCX_PTC_SEQNAK:
-		val = readl(IO_ADDRESS( IO_USB_PHYS + UTMIP_HSRX_CFG1));
-		val &= ~UTMIP_HS_SYNC_START_DLY(~0);
-		val |= UTMIP_HS_SYNC_START_DLY(0x2);
-		writel(val, IO_ADDRESS( IO_USB_PHYS + UTMIP_HSRX_CFG1));
 		VDBG("TEST_SE0_NAK\n");
 		break;
 	case PORTSCX_PTC_PACKET:
@@ -1764,7 +1739,7 @@ static void udc_test_mode(struct fsl_udc *udc, u32 test_mode)
 	 * See USB 2.0 spec, section 9.4.9 for test modes operation in "Set Feature"
 	 * See USB 2.0 spec, section 7.1.20 for test modes.
 	 */
-	USB_INFO("udc entering the test mode, power cycle to exit test mode\n");
+	pr_info("udc entering the test mode, power cycle to exit test mode\n");
 	return;
 stall:
 	ep0stall(udc);
@@ -2293,7 +2268,6 @@ static void fsl_udc_charger_detect_work(struct work_struct* work)
  */
 static void fsl_udc_restart(struct fsl_udc *udc)
 {
-	//unsigned long flags = 0; /* htc */
 	USB_INFO("fsl_udc_restart");
 	/* setup the controller in the device mode */
 	dr_controller_setup(udc);
@@ -2788,6 +2762,7 @@ static void charger_detect_gpio(struct fsl_udc *udc)
 
 	}
 }
+
 static void update_wake_lock(int status)
 {
 	if (status == CONNECT_TYPE_USB || status == CONNECT_TYPE_UNKNOWN)
@@ -2966,7 +2941,6 @@ static void usb_do_work(struct work_struct *w)
 }
 static void usb_start(struct fsl_udc *udc)
 {
-	//unsigned long flags; /* htc */
 	USB_DEBUG("usb_start\n");
 	/*spin_lock_irqsave(&udc->lock, flags);*/ /* htc */
 	udc->flags |= USB_FLAG_START;
@@ -3023,7 +2997,7 @@ static void usb_vbus_state_work(struct work_struct *w)
 {
 	struct fsl_udc *udc = container_of(w, struct fsl_udc, check_vbus_work.work);
 	int _vbus;
-	//unsigned long flags = 0; /* htc */
+
 	if(!udc)
 		return;
 	_vbus = vbus_enabled();
@@ -3285,6 +3259,8 @@ static ssize_t store_charger(struct device *dev,
 	USB_INFO("store_charger\n");
 
 	sscanf(buf, "%d", &(state));
+	USB_INFO("store_charger\n");
+
 	if(state)
 	{
 		udc_controller->connect_type = CONNECT_TYPE_USB;
@@ -3724,7 +3700,6 @@ static int __init fsl_udc_probe(struct platform_device *pdev)
 	u32 dccparams;
 #if defined(CONFIG_ARCH_TEGRA)
 	struct resource *res_sys = NULL;
-	//struct fsl_usb2_platform_data *pdata = pdev->dev.platform_data;
 #endif
 
 	if (strcmp(pdev->name, driver_name)) {
@@ -4034,46 +4009,26 @@ static int fsl_udc_suspend(struct platform_device *pdev, pm_message_t state)
  *-----------------------------------------------------------------*/
 static int fsl_udc_resume(struct platform_device *pdev)
 {
-	USB_INFO("fsl_udc_resume #0");
-	//unsigned long val;
-	irq_udc_debug =1 ;
-	irq_otg_debug =1 ;
-	if(global_wakeup_state == VBUS_WAKEUP_ENR)
-		wake_lock_timeout(&udc_resume_wake_lock, 8*HZ);
-
-#if 0
-	val =fsl_readl(&usb_sys_regs->vbus_wakeup);
-	USB_INFO("fsl_udc_resume#1 reg:%lx",val);
 	if (udc_controller->transceiver) {
-		fsl_udc_clk_enable();
-#if 0
+		fsl_udc_clk_resume(true);
 		if (!(fsl_readl(&usb_sys_regs->vbus_wakeup) & USB_SYS_ID_PIN_STATUS)) {
 			/* If ID status is low means host is connected, return */
-			USB_INFO("fsl_udc_resume #1");
-			fsl_udc_clk_disable();
-			//disable_irq_wake(udc_controller->irq);
+			fsl_udc_clk_suspend(false);
 			return 0;
 		}
-#endif
 		/* check for VBUS */
 		if (!(fsl_readl(&usb_sys_regs->vbus_wakeup) & USB_SYS_VBUS_STATUS)) {
 			/* if there is no VBUS then power down the clocks and return */
-			USB_INFO("fsl_udc_resume #2 no vbus");
-			fsl_udc_clk_disable();
-			//disable_irq_wake(udc_controller->irq);
+			fsl_udc_clk_suspend(false);
 			return 0;
 		} else {
-
-			fsl_udc_clk_disable();
-			if (udc_controller->transceiver->state == OTG_STATE_A_HOST) {
-			    //disable_irq_wake(udc_controller->irq);
-			    return 0;
-			}
+			fsl_udc_clk_suspend(false);
+			if (udc_controller->transceiver->state == OTG_STATE_A_HOST)
+				return 0;
 			/* Detected VBUS set the transceiver state to device mode */
 			udc_controller->transceiver->state = OTG_STATE_B_PERIPHERAL;
 		}
 	}
-
 	fsl_udc_clk_resume(true);
 #if defined(CONFIG_ARCH_TEGRA)
 	fsl_udc_restart(udc_controller);
@@ -4090,8 +4045,7 @@ static int fsl_udc_resume(struct platform_device *pdev)
 	/* Power down the phy if cable is not connected */
 	if (!(fsl_readl(&usb_sys_regs->vbus_wakeup) & USB_SYS_VBUS_STATUS))
 		fsl_udc_clk_suspend(false);
-	//disable_irq_wake(udc_controller->irq);
-#endif
+
 	return 0;
 }
 

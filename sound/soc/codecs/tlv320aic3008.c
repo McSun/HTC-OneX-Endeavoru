@@ -92,8 +92,6 @@ struct aic3008_clk_state {
 	struct wake_lock wakelock;
 };
 
-static struct aic3008_clk_state codec_clk;
-
 static const struct snd_kcontrol_new aic3008_snd_controls[] = { };
 static const struct snd_soc_dapm_widget aic3008_dapm_widgets[] = { };
 static const struct snd_soc_dapm_route intercon[] = { };
@@ -229,81 +227,6 @@ static int32_t spi_write_table_parsepage(CODEC_SPI_CMD *cmds, int num)
 	}
 
 	return status;
-}
-
-/* write a register then read a register, compare them ! */
-static int32_t spi_write_read_list(CODEC_SPI_CMD *cmds, int num)
-{
-	int i;
-	int rc;
-	unsigned char write_buffer[2];
-	unsigned char read_result[2] = { 0, 0 };
-
-	if (!codec_spi_dev)
-		return 0;
-
-	codec_spi_dev->bits_per_word = 16;
-	for (i = 0; i < num; i++) {
-		/*if writing page, then don't read its value */
-		switch (cmds[i].act) {
-		case 'w':
-			write_buffer[1] = cmds[i].reg << 1;
-			write_buffer[0] = cmds[i].data;
-			if (cmds[i].reg == 0x00 || cmds[i].reg == 0x7F) {
-				rc = spi_write(codec_spi_dev, write_buffer, sizeof(write_buffer));
-				if (rc < 0)
-					return rc;
-				if(cmds[i].reg == 0x00)
-				{
-					AUD_DBG("------ write page: 0x%02X ------\n", cmds[i].data);
-				}
-				else if(cmds[i].reg == 0x7F)
-				{
-					AUD_DBG("------ write book: 0x%02X ------\n", cmds[i].data);
-				}
-			} else {
-				rc = spi_write_then_read(codec_spi_dev, write_buffer, 2, read_result, 2);
-				if (rc < 0)
-					return rc;
-
-				if (read_result[0] != cmds[i].data)
-					AUD_INFO("incorrect value,reg 0x%02x, write 0x%02x, read 0x%02x",
-						cmds[i].reg, cmds[i].data, read_result[0]);
-			}
-			break;
-		case 'd':
-			msleep(cmds[i].data);
-			break;
-		default:
-			break;
-		}
-	}
-	return 0;
-}
-
-/*
- * This function arranges the address and data bytes in a large command list
- * and use kernel SPI API,
- * i.e. use single spi_write() to write spi commands to the audio codec.
- */
-static int32_t spi_write_list(CODEC_SPI_CMD *cmds, int num)
-{
-	int i;
-	int rc;
-	unsigned char buffer[2];
-
-	if (!codec_spi_dev)
-		return 0;
-
-	codec_spi_dev->bits_per_word = 16;
-	for (i = 0; i < num; i++) {
-		buffer[1] = cmds[i].reg << 1;
-		buffer[0] = cmds[i].data;
-		rc = spi_write(codec_spi_dev, buffer, sizeof(buffer));
-		if (rc < 0)
-			return rc;
-	}
-	return 0;
 }
 
 /*
@@ -550,6 +473,65 @@ int aic3008_setMode(int cmd, int idx, int is_call_mode)
 }
 EXPORT_SYMBOL_GPL(aic3008_setMode);
 
+/* Access function pointed by ctl_ops to call control operations */
+static int aic3008_config(CODEC_SPI_CMD *cmds, int size)
+{
+	int i, retry, ret;
+	unsigned char data;
+	if(!aic3008_power_ctl->isPowerOn)
+	{
+		AUD_INFO("aic3008_config: AIC3008 is power off now");
+		return -EINVAL;
+	}
+
+	if (!codec_spi_dev) {
+		AUD_ERR("no spi device\n");
+		return -EFAULT;
+	}
+
+	if (cmds == NULL) {
+		AUD_ERR("invalid spi parameters\n");
+		return -EINVAL;
+	}
+
+	/* large dsp image use bulk mode to transfer */
+	if (size < 1000) {
+		for (i = 0; i < size; i++) {
+			switch (cmds[i].act) {
+			case 'w':
+				codec_spi_write(cmds[i].reg, cmds[i].data, true);
+				break;
+			case 'r':
+				for (retry = AIC3008_MAX_RETRY; retry > 0; retry--) {
+					ret = codec_spi_read(cmds[i].reg, &data, true);
+					if (ret < 0) {
+						AUD_ERR("read fail %d, retry\n", ret);
+						hr_msleep(1);
+					} else if (data == cmds[i].data) {
+						AUD_DBG("data == cmds\n");
+						break;
+					}
+				}
+				if (retry <= 0)
+					AUD_DBG("3008 power down procedure,"
+							" flag 0x%02X=0x%02X(0x%02X)\n",
+							cmds[i].reg, ret, cmds[i].data);
+				break;
+			case 'd':
+				msleep(cmds[i].data);
+				break;
+			default:
+				break;
+			}
+		}
+	} else {
+		/* use bulk to transfer large data */
+		spi_write_table_parsepage(cmds, size);
+		AUD_DBG("Here is bulk mode\n");
+	}
+	return 0;
+}
+
 void aic3008_set_mic_bias(int on)
 {
 	if (on) {
@@ -621,77 +603,6 @@ static CODEC_SPI_CMD **init_2d_array(int row_sz, int col_sz)
 			table_ptr[i] = (CODEC_SPI_CMD *) table + i * col_sz;
 
 	return table_ptr;
-}
-
-static void spi_aic3008_prevent_sleep(void)
-{
-	wake_lock(&codec_clk.wakelock);
-	wake_lock(&codec_clk.idlelock);
-}
-
-static void spi_aic3008_allow_sleep(void)
-{
-	wake_unlock(&codec_clk.idlelock);
-	wake_unlock(&codec_clk.wakelock);
-}
-
-/* Access function pointed by ctl_ops to call control operations */
-static int aic3008_config(CODEC_SPI_CMD *cmds, int size)
-{
-	int i, retry, ret;
-	unsigned char data;
-	if(!aic3008_power_ctl->isPowerOn)
-	{
-		AUD_INFO("aic3008_config: AIC3008 is power off now");
-		return -EINVAL;
-	}
-
-	if (!codec_spi_dev) {
-		AUD_ERR("no spi device\n");
-		return -EFAULT;
-	}
-
-	if (cmds == NULL) {
-		AUD_ERR("invalid spi parameters\n");
-		return -EINVAL;
-	}
-
-	/* large dsp image use bulk mode to transfer */
-	if (size < 1000) {
-		for (i = 0; i < size; i++) {
-			switch (cmds[i].act) {
-			case 'w':
-				codec_spi_write(cmds[i].reg, cmds[i].data, true);
-				break;
-			case 'r':
-				for (retry = AIC3008_MAX_RETRY; retry > 0; retry--) {
-					ret = codec_spi_read(cmds[i].reg, &data, true);
-					if (ret < 0) {
-						AUD_ERR("read fail %d, retry\n", ret);
-						hr_msleep(1);
-					} else if (data == cmds[i].data) {
-						AUD_DBG("data == cmds\n");
-						break;
-					}
-				}
-				if (retry <= 0)
-					AUD_DBG("3008 power down procedure,"
-							" flag 0x%02X=0x%02X(0x%02X)\n",
-							cmds[i].reg, ret, cmds[i].data);
-				break;
-			case 'd':
-				msleep(cmds[i].data);
-				break;
-			default:
-				break;
-			}
-		}
-	} else {
-		/* use bulk to transfer large data */
-		spi_write_table_parsepage(cmds, size);
-		AUD_DBG("Here is bulk mode\n");
-	}
-	return 0;
 }
 
 static int aic3008_config_ex(CODEC_SPI_CMD *cmds, int size)
@@ -987,7 +898,7 @@ static int aic3008_set_config(int config_tbl, int idx, int en)
 		if(!aic3008_power_ctl->isPowerOn)
 		{
 			AUD_ERR("[TX] AIC3008 is power off now, can't do IO CONFIG TX = %d, please check this condition!!", idx);
-			AUD_ERR("[TX] Since IO CONFIG TX = %d can't be done, it maybe no sound on device");
+			AUD_ERR("[TX] Since IO CONFIG TX = %d can't be done, it maybe no sound on device", idx);
 			break;
 		}
 		if (en) {
@@ -1012,7 +923,7 @@ static int aic3008_set_config(int config_tbl, int idx, int en)
 		if(!aic3008_power_ctl->isPowerOn)
 		{
 			AUD_ERR("[RX] AIC3008 is power off now, can't do IO CONFIG RX = %d, please check this condition!!", idx);
-			AUD_ERR("[RX] Since IO CONFIG RX = %d can't be done, it maybe no sound on device");
+			AUD_ERR("[RX] Since IO CONFIG RX = %d can't be done, it maybe no sound on device", idx);
 			break;
 		}
 		if(!first_boot_path && idx == 10)
@@ -1533,7 +1444,6 @@ static int aic3008_dai_startup(struct snd_pcm_substream *substream,
 	struct snd_soc_pcm_runtime *rtd = substream->private_data;
 	struct snd_soc_codec *codec = rtd->codec;
 	struct aic3008_priv *aic3008 = snd_soc_codec_get_drvdata(codec);
-	struct spi_device *spi = codec->control_data;
 	struct snd_pcm_runtime *master_runtime;
 
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK)
@@ -1662,15 +1572,17 @@ struct snd_soc_dai_driver aic3008_dai = {
 /*****************************************************************************/
 static int __devinit aic3008_probe(struct snd_soc_codec *codec)
 {
-	AUD_INFO("aic3008_probe() start... aic3008_codec:%p", codec);
 	int ret = 0;
 
 	struct aic3008_priv *aic3008 = snd_soc_codec_get_drvdata(codec);
 	aic3008->codec = codec;
+
+	AUD_INFO("aic3008_probe() start... aic3008_codec:%p", codec);
+
 	aic3008->codec->control_data = (void *)codec_spi_dev;
 
 	if (!aic3008) {
-		AUD_ERR("%s: Codec not registered, SPI device not yet probed\n",
+		AUD_ERR("%p: Codec not registered, SPI device not yet probed\n",
 				&aic3008->codec->name);
 		return -ENODEV;
 	}
@@ -1723,15 +1635,17 @@ static struct snd_soc_codec_driver soc_codec_dev_aic3008 __refdata = {
 /*****************************************************************************/
 static int spi_aic3008_probe(struct spi_device *spi_aic3008)
 {
-	AUD_DBG("spi device: %s, addr = 0x%p. YAY! ***** Start to Test *****\n",
-		spi_aic3008->modalias, spi_aic3008);
+
 	int ret = 0;
-	codec_spi_dev = spi_aic3008; /* assign global pointer to SPI device. */
 
 	struct aic3008_priv *aic3008 = kzalloc(sizeof(struct aic3008_priv), GFP_KERNEL);;
 	if (aic3008 == NULL)
 		return -ENOMEM;
-	
+
+	AUD_DBG("spi device: %s, addr = 0x%p. YAY! ***** Start to Test *****\n",
+		spi_aic3008->modalias, spi_aic3008);
+	codec_spi_dev = spi_aic3008; /* assign global pointer to SPI device. */	
+
 	spi_set_drvdata(spi_aic3008, aic3008);
 
 	ret = snd_soc_register_codec(&spi_aic3008->dev,

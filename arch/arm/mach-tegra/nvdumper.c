@@ -69,7 +69,7 @@ static int __init nvdumper_init(void)
 {
 	int ret, dirty;
 
-	printk(KERN_INFO "nvdumper: nvdumper_reserved:0x%x\n", nvdumper_reserved);
+	printk(KERN_INFO "nvdumper: nvdumper_reserved:0x%08lx\n", nvdumper_reserved);
 	if (!nvdumper_reserved) {
 		printk(KERN_INFO "nvdumper: not configured\n");
 		return -ENOTSUPP;

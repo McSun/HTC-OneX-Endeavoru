@@ -844,6 +844,9 @@ static int __init init_core_cap_one(struct clk *c, unsigned long *freqs)
 	int i, v, next_v;
 	unsigned long rate, next_rate = 0;
 
+	next_v = tegra_dvfs_predict_millivolts(
+		c->parent, next_rate);
+
 	for (i = 0; i < ARRAY_SIZE(core_millivolts); i++) {
 		v = core_millivolts[i];
 		if (v == 0)
@@ -860,8 +863,6 @@ static int __init init_core_cap_one(struct clk *c, unsigned long *freqs)
 			if (rate == next_rate)
 				break;
 
-			next_v = tegra_dvfs_predict_millivolts(
-				c->parent, next_rate);
 			if (IS_ERR_VALUE(next_rate)) {
 				pr_debug("tegra3_dvfs: failed to predict %s mV"
 					 " for rate %lu", c->name, next_rate);

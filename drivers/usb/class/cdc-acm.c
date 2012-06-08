@@ -147,7 +147,7 @@ static int max_intfs = 2;
 unsigned static int txbyte=0,rxbyte=0;
 char gpr_buf[512];
 static int pcount=0;
-static int debugtestcoung=0; 
+
 module_param(max_intfs, int, 0644);
 MODULE_PARM_DESC(max_intfs, "usb class (cdc-acm) - Number of TTYACMs");
 
@@ -316,8 +316,6 @@ static void acm_write_done(struct acm *acm, struct acm_wb *wb)
 {
 	wb->use = 0;
 	acm->transmitting--;
-	if (verbose) ("[ref] - %s(%d) %d\n", __func__, __LINE__, --autopm_refcnt);
-	reflog("[ref] - %s(%d) %d\n", __func__, __LINE__, --autopm_refcnt);
 	usb_autopm_put_interface_async(acm->control);
 }
 
@@ -327,7 +325,7 @@ static void acm_write_done(struct acm *acm, struct acm_wb *wb)
  * the caller is responsible for locking
  */
 
-static int acm_start_wb(struct acm *acm, struct acm_wb *wb, char *func_name)
+static int acm_start_wb(struct acm *acm, struct acm_wb *wb, const char *func_name)
 {
 	int rc;
 
@@ -2065,7 +2063,7 @@ static int acm_suspend(struct usb_interface *intf, pm_message_t message)
 static int acm_resume(struct usb_interface *intf)
 {
 	struct acm *acm = usb_get_intfdata(intf);
-	struct acm_wb *wb;
+
 	int rv = 0;
 	int cnt;
 #ifdef CONFIG_PM
@@ -2172,7 +2170,6 @@ err_out:
 static int acm_reset_resume(struct usb_interface *intf)
 {
 	struct acm *acm = usb_get_intfdata(intf);
-	struct tty_struct *tty = NULL;
 
 	printk(KERN_INFO"%s acm->port.count=%d\n",__func__,acm->port.count);
 	pr_info(MODULE_NAME "%s - don't hangup ttyacm\n", __func__);
