@@ -210,8 +210,7 @@ void __init tegra_init_irq(void)
 	gic_arch_extn.irq_set_wake = tegra_set_wake;
 	gic_arch_extn.flags = IRQCHIP_MASK_ON_SUSPEND;
 
-	gic_init(0, 29, IO_ADDRESS(TEGRA_ARM_INT_DIST_BASE),
-		 IO_ADDRESS(TEGRA_ARM_PERIF_BASE + 0x100));
+	tegra_gic_init();
 }
 
 void tegra_init_legacy_irq_cop(void)
