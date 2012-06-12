@@ -16,6 +16,7 @@
 #include <linux/cpumask.h>	/* Required by asm/hardware/gic.h */
 #include <linux/io.h>
 #include <linux/irqnr.h>
+#include <linux/init.h>
 
 #include <asm/hardware/gic.h>
 
