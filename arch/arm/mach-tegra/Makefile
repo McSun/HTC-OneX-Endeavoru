@@ -198,7 +198,7 @@ obj-${CONFIG_MACH_VERTEXF}            += charger.o
 obj-${CONFIG_MACH_VERTEXF}            += htc-gpio.o
 
 obj-${CONFIG_MACH_ENDEAVORU}                 += board-endeavoru.o
-obj-${CONFIG_MACH_ENDEAVORU}                 += board-endeavor-panel.o
+obj-${CONFIG_MACH_ENDEAVORU}                 += board-endeavoru-panel.o
 obj-${CONFIG_MACH_ENDEAVORU}                 += board-endeavoru-pinmux.o
 obj-${CONFIG_MACH_ENDEAVORU}                 += board-endeavoru-sdhci.o
 obj-${CONFIG_MACH_ENDEAVORU}                 += board-endeavoru-memory.o
